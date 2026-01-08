@@ -68,20 +68,31 @@ class SecondWindow(arcade.Window):
             bold=False
         )
 
+        # создание списка спрайтов
+        self.all_sprites = arcade.SpriteList()
+
+        #создание кнопок-спрайтов
+        self.botton_sprite_1 = arcade.Sprite("botton.png", scale=0.5)
+        self.botton_sprite_1.center_x = SCREEN_WIDTH // 2
+        self.botton_sprite_1.center_y = SCREEN_HEIGHT // 2 - 2.5
+        self.all_sprites.append(self.botton_sprite_1)
+
+        self.botton_sprite_2 = arcade.Sprite("botton.png", scale=0.5)
+        self.botton_sprite_2.center_x = SCREEN_WIDTH // 2
+        self.botton_sprite_2.center_y = SCREEN_HEIGHT // 2 - 102.5
+        self.all_sprites.append(self.botton_sprite_2)
+
+        self.botton_sprite_3 = arcade.Sprite("botton.png", scale=0.5)
+        self.botton_sprite_3.center_x = SCREEN_WIDTH // 2
+        self.botton_sprite_3.center_y = SCREEN_HEIGHT // 2 - 202.5
+        self.all_sprites.append(self.botton_sprite_3)
+
     def on_update(self, delta_time):
         #обновление времени
         self.time_elapsed += delta_time
 
     def on_draw(self):
         self.clear()
-
-        #отрисовка фона для кнопок
-        arcade.draw_lbwh_rectangle_filled(SCREEN_WIDTH // 2 - 75, SCREEN_HEIGHT // 2 - 35, 150, 70,
-                                          arcade.color.TANGERINE)
-        arcade.draw_lbwh_rectangle_filled(SCREEN_WIDTH // 2 - 75, SCREEN_HEIGHT // 2 - 135, 150, 70,
-                                          arcade.color.TANGERINE)
-        arcade.draw_lbwh_rectangle_filled(SCREEN_WIDTH // 2 - 75, SCREEN_HEIGHT // 2 - 235, 150, 70,
-                                          arcade.color.TANGERINE)
 
         #значения текстовых обьектов
         self.choose_text.value = "CHOOSE DIFFICULTY"
@@ -112,13 +123,24 @@ class SecondWindow(arcade.Window):
         #отрисовка пульсирующего текста
         pulsating_text.draw()
 
+        self.all_sprites.draw()
+
         #отрисовка текста кнопок
         self.easy_text.draw()
         self.medium_text.draw()
         self.hard_text.draw()
 
+    def on_mouse_press(self, x, y, button, modifiers):
+        #проверка нажатия на кнопку сложности
+        if self.botton_sprite_1.collides_with_point((x, y)):
+            game_view = GameWindow(SCREEN_WIDTH, SCREEN_HEIGHT, SECOND_WINDOW_TITLE)
+            self.window.show_view(game_view)
+        elif self.botton_sprite_2.collides_with_point((x, y)):
+            print(2)
+        elif self.botton_sprite_3.collides_with_point((x, y)):
+            print(3)
 
-class MyGame(arcade.Window):
+class WelcomeWindow(arcade.Window):
     def __init__(self, width, height, title):
         super().__init__(width, height, title)
         arcade.set_background_color(arcade.color.DARK_BLUE_GRAY)
@@ -199,11 +221,26 @@ class MyGame(arcade.Window):
                 and abs(y - self.start_sprite.center_y) < self.start_sprite.height / 2
         ):
             #открытие второго окна
-            SecondWindow(SCREEN_WIDTH, SCREEN_HEIGHT, SECOND_WINDOW_TITLE)
+            game_view = SecondWindow(SCREEN_WIDTH, SCREEN_HEIGHT, SECOND_WINDOW_TITLE)
+            self.window.show_view(game_view)
+
+class GameWindow(arcade.Window):
+    def __init__(self, width, height, title):
+        super().__init__(width, height, title)
+        arcade.set_background_color(arcade.color.BLACK)
+
+        self.all_sprites = arcade.SpriteList()
+
+    def on_draw(self):
+        self.clear()
+        self.player_sprite_1 = arcade.Sprite("tennisist.png", scale=0.35)
+        self.player_sprite_1.center_x = SCREEN_WIDTH // 3
+        self.player_sprite_1.center_y = 300
+        self.all_sprites.append(self.player_sprite_1)
 
 
 def setup_game(width=800, height=600, title="Cross"):
-    game = MyGame(width, height, title)
+    game = WelcomeWindow(width, height, title)
     return game
 
 

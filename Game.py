@@ -5,7 +5,7 @@ SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 SCREEN_WIDTH_GAME = 1000
 SCREEN_HEIGHT_GAME = 650
-SCREEN_TITLE = "Cross"
+SCREEN_TITLE = "GameStart"
 SECOND_WINDOW_TITLE = "Second Window"
 
 # ======= Класс для первого окна ======

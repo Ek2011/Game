@@ -228,15 +228,70 @@ class GameWindow(arcade.Window):
     def __init__(self, width, height, title):
         super().__init__(width, height, title)
         arcade.set_background_color(arcade.color.BLACK)
-
         self.all_sprites = arcade.SpriteList()
+        self.player_speed = 300
+        self.keys_pressed = set()
+        self.hero_x = SCREEN_WIDTH - 70
+        self.hero_y = SCREEN_HEIGHT // 2
+        self.player_textures = []
+        for i in range(8):
+            texture = arcade.load_texture(
+                f":resources:/images/animated_characters/zombie/zombie_walk{i}.png"
+            )
+            self.player_textures.append(texture)
+
+        self.player_sprite_1 = arcade.Sprite()
+        self.player_sprite_1.texture = self.player_textures[0]
+        self.player_sprite_1.center_x = self.hero_x
+        self.player_sprite_1.center_y = self.hero_y
+        self.all_sprites.append(self.player_sprite_1)
+
+        self.current_texture = 0
+        self.time_since_last_frame = 0
+        self.frame_duration = 0.1
+
+
+    def on_key_press(self, key, modifiers):
+        self.keys_pressed.add(key)
+
+    def on_key_release(self, key, modifiers):
+        if key in self.keys_pressed:
+            self.keys_pressed.remove(key)
+
+    def on_update(self, delta_time):
+        dx, dy = 0, 0
+        moving = False
+        if arcade.key.UP in self.keys_pressed or arcade.key.W in self.keys_pressed:
+            dy += self.player_speed * delta_time
+            moving = True
+        if arcade.key.DOWN in self.keys_pressed or arcade.key.S in self.keys_pressed:
+            dy -= self.player_speed * delta_time
+            moving = True
+
+        self.hero_x += dx
+        self.hero_y += dy
+
+        # Ограничение в пределах экрана
+        self.hero_x = max(20, min(SCREEN_WIDTH - 20, self.hero_x))
+        self.hero_y = max(20, min(SCREEN_HEIGHT - 20, self.hero_y))
+
+        self.player_sprite_1.center_x = self.hero_x
+        self.player_sprite_1.center_y = self.hero_y
+
+        if moving:
+            self.time_since_last_frame += delta_time
+            if self.time_since_last_frame >= self.frame_duration:
+                self.time_since_last_frame = 0
+                self.current_texture = (self.current_texture + 1) % len(self.player_textures)
+                self.player_sprite_1.texture = self.player_textures[self.current_texture]
+        else:
+            self.player_sprite_1.texture = self.player_textures[0]
+            self.current_texture = 0
+            self.time_since_last_frame = 0
 
     def on_draw(self):
         self.clear()
-        self.player_sprite_1 = arcade.Sprite("tennisist.png", scale=0.35)
-        self.player_sprite_1.center_x = SCREEN_WIDTH // 3
-        self.player_sprite_1.center_y = 300
-        self.all_sprites.append(self.player_sprite_1)
+        self.all_sprites.draw()
 
 
 def setup_game(width=800, height=600, title="Cross"):

@@ -10,7 +10,7 @@ SECOND_WINDOW_TITLE = "Second Window"
 class SecondWindow(arcade.Window):
     def __init__(self, width, height, title):
         super().__init__(width, height, title)
-        arcade.set_background_color(arcade.color.GRAY)
+        arcade.set_background_color(arcade.color.DARK_BLUE_GRAY)
 
         self.time_elapsed = 0
         self.pulse_speed = 7
@@ -107,11 +107,10 @@ class SecondWindow(arcade.Window):
         self.hard_text.draw()
 
 
-
 class MyGame(arcade.Window):
     def __init__(self, width, height, title):
         super().__init__(width, height, title)
-        arcade.set_background_color(arcade.color.GRAY)
+        arcade.set_background_color(arcade.color.DARK_BLUE_GRAY)
 
         self.text_object = arcade.Text(
             "",
@@ -130,6 +129,8 @@ class MyGame(arcade.Window):
         self.pulse_amplitude = 0.02
         self.pulse_speed = 8
 
+        self.ball_rotation_speed = 300
+
         self.all_sprites = arcade.SpriteList()
 
         self.tennisist_sprite_1 = arcade.Sprite("tennisist.png", scale=0.35)
@@ -147,11 +148,22 @@ class MyGame(arcade.Window):
         self.start_sprite.center_y = SCREEN_HEIGHT // 2 - 50
         self.all_sprites.append(self.start_sprite)
 
+        self.tennball = arcade.Sprite("tennball.png", scale=0.15)
+        self.tennball.center_x = SCREEN_WIDTH - 120
+        self.tennball.center_y = SCREEN_HEIGHT - 120
+        self.all_sprites.append(self.tennball)
+
     def on_update(self, delta_time):
         self.time_elapsed += delta_time
 
         pulse_scale = self.start_base_scale + self.pulse_amplitude * math.sin(self.pulse_speed * self.time_elapsed)
         self.start_sprite.scale = pulse_scale
+
+        self.tennball.angle += self.ball_rotation_speed * delta_time
+        if self.tennball.angle >= 360:
+            self.tennball.angle -= 360
+        elif self.tennball.angle < 0:
+            self.tennball.angle += 360
 
     def on_draw(self):
         self.clear()

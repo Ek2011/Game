@@ -3,6 +3,8 @@ import math
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
+SCREEN_WIDTH_GAME = 1100
+SCREEN_HEIGHT_GAME = 700
 SCREEN_TITLE = "Cross"
 SECOND_WINDOW_TITLE = "Second Window"
 
@@ -133,7 +135,7 @@ class SecondWindow(arcade.Window):
     def on_mouse_press(self, x, y, button, modifiers):
         #проверка нажатия на кнопку сложности
         if self.botton_sprite_1.collides_with_point((x, y)):
-            game_view = GameWindow(SCREEN_WIDTH, SCREEN_HEIGHT, SECOND_WINDOW_TITLE)
+            game_view = GameWindow(SCREEN_WIDTH_GAME, SCREEN_HEIGHT_GAME, SECOND_WINDOW_TITLE)
             self.window.show_view(game_view)
         elif self.botton_sprite_2.collides_with_point((x, y)):
             print(2)
@@ -231,8 +233,8 @@ class GameWindow(arcade.Window):
         self.all_sprites = arcade.SpriteList()
         self.player_speed = 300
         self.keys_pressed = set()
-        self.hero_x = SCREEN_WIDTH - 70
-        self.hero_y = SCREEN_HEIGHT // 2
+        self.hero_x = SCREEN_WIDTH_GAME - 70
+        self.hero_y = SCREEN_HEIGHT_GAME // 2
         self.player_textures = []
         for i in range(8):
             texture = arcade.load_texture(
@@ -272,8 +274,8 @@ class GameWindow(arcade.Window):
         self.hero_y += dy
 
         # Ограничение в пределах экрана
-        self.hero_x = max(20, min(SCREEN_WIDTH - 20, self.hero_x))
-        self.hero_y = max(20, min(SCREEN_HEIGHT - 20, self.hero_y))
+        self.hero_x = max(20, min(SCREEN_WIDTH_GAME - 20, self.hero_x))
+        self.hero_y = max(20, min(SCREEN_HEIGHT_GAME - 20, self.hero_y))
 
         self.player_sprite_1.center_x = self.hero_x
         self.player_sprite_1.center_y = self.hero_y

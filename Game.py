@@ -6,12 +6,12 @@ SCREEN_HEIGHT = 600
 SCREEN_WIDTH_GAME = 1000
 SCREEN_HEIGHT_GAME = 650
 SCREEN_TITLE = "GameStart"
-SECOND_WINDOW_TITLE = "Second Window"
+SECOND_WINDOW_TITLE = "Game"
 
 # ======= Класс для первого окна ======
-class WelcomeWindow(arcade.Window):
-    def __init__(self, width, height, title):
-        super().__init__(width, height, title)
+class WelcomeView(arcade.View):
+    def __init__(self):
+        super().__init__()
         arcade.set_background_color(arcade.color.DARK_BLUE_GRAY)
 
         #текстовый обьект
@@ -90,13 +90,13 @@ class WelcomeWindow(arcade.Window):
                 and abs(y - self.start_sprite.center_y) < self.start_sprite.height / 2
         ):
             #открытие второго окна
-            game_view = SecondWindow(SCREEN_WIDTH, SCREEN_HEIGHT, SECOND_WINDOW_TITLE)
-            self.show_view(game_view)
+            game_view = SecondView()
+            self.window.show_view(game_view)
 
 # ====== Класс для 2 окна =======
-class SecondWindow(arcade.Window):
-    def __init__(self, width, height, title):
-        super().__init__(width, height, title)
+class SecondView(arcade.View):
+    def __init__(self):
+        super().__init__()
         arcade.set_background_color(arcade.color.DARK_BLUE_GRAY)
 
         #параметры пульсации текста
@@ -220,7 +220,7 @@ class SecondWindow(arcade.Window):
     def on_mouse_press(self, x, y, button, modifiers):
         #проверка нажатия на кнопку сложности
         if self.botton_sprite_1.collides_with_point((x, y)):
-            game_view = GameWindow(SCREEN_WIDTH_GAME, SCREEN_HEIGHT_GAME, SECOND_WINDOW_TITLE)
+            game_view = GameWindow()
             self.window.show_view(game_view)
         elif self.botton_sprite_2.collides_with_point((x, y)):
             print(2)
@@ -228,9 +228,9 @@ class SecondWindow(arcade.Window):
             print(3)
 
 # ===== Класс для легкой игры =======
-class GameWindow(arcade.Window):
-    def __init__(self, width, height, title):
-        super().__init__(width, height, title)
+class GameWindow(arcade.View):
+    def __init__(self):
+        super().__init__()
         arcade.set_background_color(arcade.color.BLACK)
 
         self.all_sprites = arcade.SpriteList()
@@ -278,6 +278,8 @@ class GameWindow(arcade.Window):
         self.time_since_last_frame_2 = 0
         self.frame_duration_2 = 0.1
 
+    def on_show_view(self):
+        self.window.set_size(SCREEN_WIDTH_GAME, SCREEN_HEIGHT_GAME)
 
     def on_key_press(self, key, modifiers):
         self.keys_pressed.add(key)
@@ -347,13 +349,17 @@ class GameWindow(arcade.Window):
         self.all_sprites.draw()
 
 
-def setup_game(width=800, height=600, title="Cross"):
-    game = WelcomeWindow(width, height, title)
-    return game
+#def setup_game(width=800, height=600, title="Cross"):
+#    game = WelcomeWindow(width, height, title)
+#    return game
 
 
 def main():
-    setup_game(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+    window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+    # Создаем и показываем первый View
+    start_view = WelcomeView()
+    window.show_view(start_view)
+
     arcade.run()
 
 

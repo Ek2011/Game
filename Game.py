@@ -294,8 +294,7 @@ class GameWindow(arcade.View):
         self.time_since_last_frame_2 = 0
         self.frame_duration_2 = 0.1
 
-        self.wall_list_down = arcade.SpriteList()
-        self.wall_list_up = arcade.SpriteList()
+        self.wall_list = arcade.SpriteList()
         # Нижние стены
         for x in range(0, SCREEN_WIDTH_GAME, 64):
             wall = arcade.Sprite(":resources:images/tiles/lavaTop_low.png", 0.5)
@@ -303,7 +302,7 @@ class GameWindow(arcade.View):
             wall.center_y = 32
             wall.width = 64
             wall.height = 64
-            self.wall_list_down.append(wall)
+            self.wall_list.append(wall)
 
         # Верхние стены
         for x in range(0, SCREEN_WIDTH_GAME, 64):
@@ -312,20 +311,18 @@ class GameWindow(arcade.View):
             wall.center_y = SCREEN_HEIGHT_GAME - 32  # Правильная высота
             wall.width = 64
             wall.height = 64
-            self.wall_list_up.append(wall)
+            self.wall_list.append(wall)
 
         #мячик
-        self.ball_speed_x = 6
-        self.ball_speed_y = 6
+        self.ball_speed = 6
         self.direction_ball = random.randint(1, 2)
         self.ball = arcade.Sprite("tennball.png", scale=0.025)
         self.ball.center_x = SCREEN_WIDTH_GAME // 2
         self.ball.center_y = SCREEN_HEIGHT_GAME // 2
         self.all_sprites.append(self.ball)
-        self.wall_player_list_left = arcade.SpriteList()
-        self.wall_player_list_right = arcade.SpriteList()
-        self.wall_player_list_left.append(self.player_sprite_1)
-        self.wall_player_list_right.append(self.player_sprite_2)
+        self.wall_player_list = arcade.SpriteList()
+        self.wall_player_list.append(self.player_sprite_1)
+        self.wall_player_list.append(self.player_sprite_2)
 
     def on_show_view(self):
         self.window.set_size(SCREEN_WIDTH_GAME, SCREEN_HEIGHT_GAME)
@@ -373,47 +370,26 @@ class GameWindow(arcade.View):
 
         # Проверяем столкновения игрока 1 со стенами
         wall_collision_1 = False
-        for wall in self.wall_list_up:
-            if arcade.check_for_collision(self.player_sprite_1, wall):
-                wall_collision_1 = True
-                break
-        for wall in self.wall_list_down:
+        for wall in self.wall_list:
             if arcade.check_for_collision(self.player_sprite_1, wall):
                 wall_collision_1 = True
                 break
 
         # Проверяем столкновения игрока 2 со стенами
         wall_collision_2 = False
-        for wall in self.wall_list_up:
-            if arcade.check_for_collision(self.player_sprite_2, wall):
-                wall_collision_2 = True
-                break
-        for wall in self.wall_list_down:
+        for wall in self.wall_list:
             if arcade.check_for_collision(self.player_sprite_2, wall):
                 wall_collision_2 = True
                 break
 
         wall_collision_ball = False
-        place_location = ""
-        for wall in self.wall_player_list_left:
+        for wall in self.wall_list:
             if arcade.check_for_collision(self.ball, wall):
                 wall_collision_ball = True
-                place_location = "left"
                 break
-        for wall in self.wall_player_list_right:
+        for wall in self.wall_player_list:
             if arcade.check_for_collision(self.ball, wall):
                 wall_collision_ball = True
-                place_location = "right"
-                break
-        for wall in self.wall_list_up:
-            if arcade.check_for_collision(self.ball, wall):
-                wall_collision_ball = True
-                place_location = "up"
-                break
-        for wall in self.wall_list_down:
-            if arcade.check_for_collision(self.ball, wall):
-                wall_collision_ball = True
-                place_location = "down"
                 break
 
         # Если было столкновение, возвращаем игрока на старую позицию
@@ -428,16 +404,8 @@ class GameWindow(arcade.View):
             self.player_sprite_2.center_y = self.hero_2_y
 
         if wall_collision_ball:
-            if place_location == "left":
-                self.ball_speed_x *= -1
-            elif place_location == "right":
-                self.ball_speed_x *= -1
-            elif place_location == "up":
-                self.ball_speed_y *= -1
-            elif place_location == "down":
-                self.ball_speed_y *= -1
+            self.ball_speed *= -1
             wall_collision_ball = False
-            place_location = ""
 
         # Ограничение в пределах экрана по горизонтали
         if self.hero_1_x < 20:
@@ -489,17 +457,14 @@ class GameWindow(arcade.View):
 
         #мячик
         if self.direction_ball == 1:
-            self.ball.center_x -= self.ball_speed_x
-            self.ball.center_y -= self.ball_speed_y
+            self.ball.center_x -= self.ball_speed
         else:
-            self.ball.center_x += self.ball_speed_x
-            self.ball.center_y += self.ball_speed_y
+            self.ball.center_x += self.ball_speed
 
     def on_draw(self):
         self.clear()
         #arcade.draw_texture_rect(self.texture, arcade.rect.XYWH(SCREEN_WIDTH_GAME // 2, SCREEN_HEIGHT_GAME // 2, SCREEN_WIDTH_GAME, SCREEN_HEIGHT_GAME))
-        self.wall_list_up.draw()# Сначала стены
-        self.wall_list_down.draw()
+        self.wall_list.draw()  # Сначала стены
         self.all_sprites.draw()  # Потом игроки
         """self.ball.draw()"""
 

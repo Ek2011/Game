@@ -8,13 +8,14 @@ SCREEN_HEIGHT_GAME = 650
 SCREEN_TITLE = "GameStart"
 SECOND_WINDOW_TITLE = "Game"
 
+
 # ======= Класс для первого окна ======
 class WelcomeView(arcade.View):
     def __init__(self):
         super().__init__()
         arcade.set_background_color(arcade.color.DARK_BLUE_GRAY)
 
-        #текстовый обьект
+        # текстовый обьект
         self.text_object = arcade.Text(
             "",
             x=SCREEN_WIDTH // 2,
@@ -28,17 +29,17 @@ class WelcomeView(arcade.View):
         )
         self.time_elapsed = 0
 
-        #параметры пульсации стартовой кнопки
+        # параметры пульсации стартовой кнопки
         self.start_base_scale = 0.3
         self.pulse_amplitude = 0.02
         self.pulse_speed = 8
 
         self.ball_rotation_speed = 300
 
-        #создание списка спрайтов
+        # создание списка спрайтов
         self.all_sprites = arcade.SpriteList()
 
-        #создание спрайтов
+        # создание спрайтов
         self.tennisist_sprite_1 = arcade.Sprite("tennisist.png", scale=0.35)
         self.tennisist_sprite_1.center_x = SCREEN_WIDTH // 3
         self.tennisist_sprite_1.center_y = 300
@@ -60,14 +61,14 @@ class WelcomeView(arcade.View):
         self.all_sprites.append(self.tennball)
 
     def on_update(self, delta_time):
-        #обновление времени
+        # обновление времени
         self.time_elapsed += delta_time
 
-        #формула для пульсации стартовой кнопки
+        # формула для пульсации стартовой кнопки
         pulse_scale = self.start_base_scale + self.pulse_amplitude * math.sin(self.pulse_speed * self.time_elapsed)
         self.start_sprite.scale = pulse_scale
 
-        #расчет угла вращение мяча
+        # расчет угла вращение мяча
         self.tennball.angle += self.ball_rotation_speed * delta_time
         if self.tennball.angle >= 360:
             self.tennball.angle -= 360
@@ -76,22 +77,23 @@ class WelcomeView(arcade.View):
 
     def on_draw(self):
         self.clear()
-        #отрисовка всех спрайтов
+        # отрисовка всех спрайтов
         self.all_sprites.draw()
 
-        #отрисовка текста
+        # отрисовка текста
         self.text_object.value = "PONG"
         self.text_object.draw()
 
     def on_mouse_press(self, x, y, button, modifiers):
-        #проверка нажатия на стартовую кнопку
+        # проверка нажатия на стартовую кнопку
         if (
                 abs(x - self.start_sprite.center_x) < self.start_sprite.width / 2
                 and abs(y - self.start_sprite.center_y) < self.start_sprite.height / 2
         ):
-            #открытие второго окна
+            # открытие второго окна
             game_view = SecondView()
             self.window.show_view(game_view)
+
 
 # ====== Класс для 2 окна =======
 class SecondView(arcade.View):
@@ -99,14 +101,13 @@ class SecondView(arcade.View):
         super().__init__()
         arcade.set_background_color(arcade.color.DARK_BLUE_GRAY)
 
-        #параметры пульсации текста
+        # параметры пульсации текста
         self.time_elapsed = 0
         self.pulse_speed = 7
         self.pulse_min_scale = 0.9
         self.pulse_max_scale = 1.1
 
-
-        #текстовые обьекты
+        # текстовые обьекты
         self.choose_text = arcade.Text(
             "",
             x=SCREEN_WIDTH // 2,
@@ -158,7 +159,7 @@ class SecondView(arcade.View):
         # создание списка спрайтов
         self.all_sprites = arcade.SpriteList()
 
-        #создание кнопок-спрайтов
+        # создание кнопок-спрайтов
         self.botton_sprite_1 = arcade.Sprite("botton.png", scale=0.5)
         self.botton_sprite_1.center_x = SCREEN_WIDTH // 2
         self.botton_sprite_1.center_y = SCREEN_HEIGHT // 2 - 2.5
@@ -175,26 +176,26 @@ class SecondView(arcade.View):
         self.all_sprites.append(self.botton_sprite_3)
 
     def on_update(self, delta_time):
-        #обновление времени
+        # обновление времени
         self.time_elapsed += delta_time
 
     def on_draw(self):
         self.clear()
 
-        #значения текстовых обьектов
+        # значения текстовых обьектов
         self.choose_text.value = "CHOOSE DIFFICULTY"
         self.easy_text.value = "EASY"
         self.medium_text.value = "MEDIUM"
         self.hard_text.value = "HARD"
 
-        #формула для пульсации текста
+        # формула для пульсации текста
         pulse_factor = (math.sin(self.time_elapsed * self.pulse_speed) + 1) / 2  # от 0 до 1
         current_scale = self.pulse_min_scale + (self.pulse_max_scale - self.pulse_min_scale) * pulse_factor
 
-        #значальный размер шрифта
+        # значальный размер шрифта
         original_font_size = 50
 
-        #обновление текста (для пульсации)
+        # обновление текста (для пульсации)
         pulsating_text = arcade.Text(
             "CHOOSE DIFFICULTY",
             x=SCREEN_WIDTH // 2,
@@ -207,18 +208,18 @@ class SecondView(arcade.View):
             bold=False
         )
 
-        #отрисовка пульсирующего текста
+        # отрисовка пульсирующего текста
         pulsating_text.draw()
 
         self.all_sprites.draw()
 
-        #отрисовка текста кнопок
+        # отрисовка текста кнопок
         self.easy_text.draw()
         self.medium_text.draw()
         self.hard_text.draw()
 
     def on_mouse_press(self, x, y, button, modifiers):
-        #проверка нажатия на кнопку сложности
+        # проверка нажатия на кнопку сложности
         if self.botton_sprite_1.collides_with_point((x, y)):
             game_view = GameWindow()
             self.window.show_view(game_view)
@@ -226,6 +227,7 @@ class SecondView(arcade.View):
             print(2)
         elif self.botton_sprite_3.collides_with_point((x, y)):
             print(3)
+
 
 # ===== Класс для легкой игры =======
 class GameWindow(arcade.View):
@@ -278,6 +280,29 @@ class GameWindow(arcade.View):
         self.time_since_last_frame_2 = 0
         self.frame_duration_2 = 0.1
 
+        self.wall_list = arcade.SpriteList()
+        for x in range(0, 1000, 64):
+            wall = arcade.Sprite(":resources:images/tiles/lavaTop_low.png", 0.5)
+            wall.center_x = x
+            wall.center_y = 32
+            self.wall_list.append(wall)
+
+        for x in range(0, 1000, 64):
+            wall = arcade.Sprite(":resources:images/tiles/planetCenter.png", 0.5)
+            wall.center_x = x
+            wall.center_y = SCREEN_HEIGHT + 20
+            self.wall_list.append(wall)
+
+        self.physics_engine_1 = arcade.PhysicsEngineSimple(
+            self.player_sprite_1,
+            self.wall_list
+        )
+
+        self.physics_engine_2 = arcade.PhysicsEngineSimple(
+            self.player_sprite_2,
+            self.wall_list
+        )
+
     def on_show_view(self):
         self.window.set_size(SCREEN_WIDTH_GAME, SCREEN_HEIGHT_GAME)
 
@@ -289,6 +314,8 @@ class GameWindow(arcade.View):
             self.keys_pressed.remove(key)
 
     def on_update(self, delta_time):
+        self.physics_engine_1.update()
+        self.physics_engine_2.update()
         dx1, dy1 = 0, 0
         dx2, dy2 = 0, 0
         moving1 = False
@@ -347,9 +374,10 @@ class GameWindow(arcade.View):
     def on_draw(self):
         self.clear()
         self.all_sprites.draw()
+        self.wall_list.draw()
 
 
-#def setup_game(width=800, height=600, title="Cross"):
+# def setup_game(width=800, height=600, title="Cross"):
 #    game = WelcomeWindow(width, height, title)
 #    return game
 

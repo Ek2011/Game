@@ -235,7 +235,14 @@ class GameWindow(arcade.View):
         super().__init__()
         arcade.set_background_color(arcade.color.BLACK)
 
+        self.texture = arcade.load_texture("apocal.jpg")
+
         self.all_sprites = arcade.SpriteList()
+
+        """self.ball_sprite = arcade.Sprite("ball.png", scale=0.5)
+        self.ball_sprite.center_x = SCREEN_WIDTH // 2
+        self.ball_sprite.center_y = SCREEN_HEIGHT // 2
+        self.all_sprites.append(self.ball_sprite)"""
 
         self.player1_speed = 300
         self.player_speed = 300
@@ -256,7 +263,7 @@ class GameWindow(arcade.View):
             self.player_1_textures.append(texture)
         for i in range(8):
             texture = arcade.load_texture(
-                f":resources:/images/animated_characters/zombie/zombie_walk{i}.png"
+                f":resources:images/animated_characters/zombie/zombie_walk{i}.png"
             )
             self.player_2_textures.append(texture)
 
@@ -264,12 +271,18 @@ class GameWindow(arcade.View):
         self.player_sprite_1.texture = self.player_1_textures[0]
         self.player_sprite_1.center_x = self.hero_1_x
         self.player_sprite_1.center_y = self.hero_1_y
+        # Задаем размеры для спрайта игрока 1
+        self.player_sprite_1.width = 70
+        self.player_sprite_1.height = 100
         self.all_sprites.append(self.player_sprite_1)
 
         self.player_sprite_2 = arcade.Sprite()
         self.player_sprite_2.texture = self.player_2_textures[0]
         self.player_sprite_2.center_x = self.hero_2_x
         self.player_sprite_2.center_y = self.hero_2_y
+        # Задаем размеры для спрайта игрока 2
+        self.player_sprite_2.width = 70
+        self.player_sprite_2.height = 100
         self.all_sprites.append(self.player_sprite_2)
 
         self.current_texture_1 = 0
@@ -281,27 +294,23 @@ class GameWindow(arcade.View):
         self.frame_duration_2 = 0.1
 
         self.wall_list = arcade.SpriteList()
-        for x in range(0, 1000, 64):
+        # Нижние стены
+        for x in range(0, SCREEN_WIDTH_GAME, 64):
             wall = arcade.Sprite(":resources:images/tiles/lavaTop_low.png", 0.5)
             wall.center_x = x
             wall.center_y = 32
+            wall.width = 64
+            wall.height = 64
             self.wall_list.append(wall)
 
-        for x in range(0, 1000, 64):
+        # Верхние стены
+        for x in range(0, SCREEN_WIDTH_GAME, 64):
             wall = arcade.Sprite(":resources:images/tiles/planetCenter.png", 0.5)
             wall.center_x = x
-            wall.center_y = SCREEN_HEIGHT + 20
+            wall.center_y = SCREEN_HEIGHT_GAME - 32  # Правильная высота
+            wall.width = 64
+            wall.height = 64
             self.wall_list.append(wall)
-
-        self.physics_engine_1 = arcade.PhysicsEngineSimple(
-            self.player_sprite_1,
-            self.wall_list
-        )
-
-        self.physics_engine_2 = arcade.PhysicsEngineSimple(
-            self.player_sprite_2,
-            self.wall_list
-        )
 
     def on_show_view(self):
         self.window.set_size(SCREEN_WIDTH_GAME, SCREEN_HEIGHT_GAME)
@@ -314,41 +323,90 @@ class GameWindow(arcade.View):
             self.keys_pressed.remove(key)
 
     def on_update(self, delta_time):
-        self.physics_engine_1.update()
-        self.physics_engine_2.update()
         dx1, dy1 = 0, 0
         dx2, dy2 = 0, 0
         moving1 = False
         moving2 = False
+
+        # Определяем направление движения
         if arcade.key.W in self.keys_pressed:
-            dy1 += self.player1_speed * delta_time
+            dy1 = self.player1_speed * delta_time
             moving1 = True
         if arcade.key.S in self.keys_pressed:
-            dy1 -= self.player1_speed * delta_time
+            dy1 = -self.player1_speed * delta_time
             moving1 = True
         if arcade.key.UP in self.keys_pressed:
-            dy2 += self.player_speed * delta_time
+            dy2 = self.player_speed * delta_time
             moving2 = True
         if arcade.key.DOWN in self.keys_pressed:
-            dy2 -= self.player_speed * delta_time
+            dy2 = -self.player_speed * delta_time
             moving2 = True
 
-        self.hero_1_x += dx1
+        # Сохраняем старые позиции
+        old_x1, old_y1 = self.hero_1_x, self.hero_1_y
+        old_x2, old_y2 = self.hero_2_x, self.hero_2_y
+
+        # Пробуем переместить игроков
         self.hero_1_y += dy1
-        self.hero_2_x += dx2
         self.hero_2_y += dy2
 
-        # Ограничение в пределах экрана
-        self.hero_1_x = max(20, min(SCREEN_WIDTH_GAME - 20, self.hero_1_x))
-        self.hero_1_y = max(20, min(SCREEN_HEIGHT_GAME - 20, self.hero_1_y))
-        self.hero_2_x = max(20, min(SCREEN_WIDTH_GAME - 20, self.hero_2_x))
-        self.hero_2_y = max(20, min(SCREEN_HEIGHT_GAME - 20, self.hero_2_y))
+        # Обновляем позиции спрайтов
+        self.player_sprite_1.center_x = self.hero_1_x
+        self.player_sprite_1.center_y = self.hero_1_y
+        self.player_sprite_2.center_x = self.hero_2_x
+        self.player_sprite_2.center_y = self.hero_2_y
+
+        # Проверяем столкновения игрока 1 со стенами
+        wall_collision_1 = False
+        for wall in self.wall_list:
+            if arcade.check_for_collision(self.player_sprite_1, wall):
+                wall_collision_1 = True
+                break
+
+        # Проверяем столкновения игрока 2 со стенами
+        wall_collision_2 = False
+        for wall in self.wall_list:
+            if arcade.check_for_collision(self.player_sprite_2, wall):
+                wall_collision_2 = True
+                break
+
+        # Если было столкновение, возвращаем игрока на старую позицию
+        if wall_collision_1:
+            self.hero_1_x, self.hero_1_y = old_x1, old_y1
+            self.player_sprite_1.center_x = self.hero_1_x
+            self.player_sprite_1.center_y = self.hero_1_y
+
+        if wall_collision_2:
+            self.hero_2_x, self.hero_2_y = old_x2, old_y2
+            self.player_sprite_2.center_x = self.hero_2_x
+            self.player_sprite_2.center_y = self.hero_2_y
+
+        # Ограничение в пределах экрана по горизонтали
+        if self.hero_1_x < 20:
+            self.hero_1_x = 20
+        if self.hero_1_x > SCREEN_WIDTH_GAME - 20:
+            self.hero_1_x = SCREEN_WIDTH_GAME - 20
+        if self.hero_2_x < 20:
+            self.hero_2_x = 20
+        if self.hero_2_x > SCREEN_WIDTH_GAME - 20:
+            self.hero_2_x = SCREEN_WIDTH_GAME - 20
+
+        # Ограничение в пределах экрана по вертикали (дополнительная защита)
+        if self.hero_1_y < 100:  # Минимум 100 пикселей от нижнего края
+            self.hero_1_y = 100
+        if self.hero_1_y > SCREEN_HEIGHT_GAME - 100:  # Максимум 100 пикселей от верхнего края
+            self.hero_1_y = SCREEN_HEIGHT_GAME - 100
+        if self.hero_2_y < 100:
+            self.hero_2_y = 100
+        if self.hero_2_y > SCREEN_HEIGHT_GAME - 100:
+            self.hero_2_y = SCREEN_HEIGHT_GAME - 100
 
         self.player_sprite_1.center_x = self.hero_1_x
         self.player_sprite_1.center_y = self.hero_1_y
         self.player_sprite_2.center_x = self.hero_2_x
         self.player_sprite_2.center_y = self.hero_2_y
 
+        # Обновление анимации
         if moving1:
             self.time_since_last_frame_1 += delta_time
             if self.time_since_last_frame_1 >= self.frame_duration_1:
@@ -373,13 +431,10 @@ class GameWindow(arcade.View):
 
     def on_draw(self):
         self.clear()
-        self.all_sprites.draw()
-        self.wall_list.draw()
-
-
-# def setup_game(width=800, height=600, title="Cross"):
-#    game = WelcomeWindow(width, height, title)
-#    return game
+        arcade.draw_texture_rect(self.texture, arcade.rect.XYWH(SCREEN_WIDTH_GAME // 2, SCREEN_HEIGHT_GAME // 2, SCREEN_WIDTH_GAME, SCREEN_HEIGHT_GAME))
+        self.wall_list.draw()  # Сначала стены
+        self.all_sprites.draw()  # Потом игроки
+        """self.ball.draw()"""
 
 
 def main():

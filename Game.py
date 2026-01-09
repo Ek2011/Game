@@ -237,7 +237,7 @@ class GameWindow(arcade.View):
 
         self.player1_speed = 300
         self.player_speed = 300
-
+        #
         self.hero_1_x = SCREEN_WIDTH_GAME - 958
         self.hero_1_y = SCREEN_HEIGHT_GAME // 2
 

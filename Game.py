@@ -1,5 +1,6 @@
 import arcade
 import math
+import random
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
@@ -312,10 +313,16 @@ class GameWindow(arcade.View):
             wall.height = 64
             self.wall_list.append(wall)
 
+        #мячик
+        self.ball_speed = 6
+        self.direction_ball = random.randint(1, 2)
         self.ball = arcade.Sprite("tennball.png", scale=0.025)
         self.ball.center_x = SCREEN_WIDTH_GAME // 2
         self.ball.center_y = SCREEN_HEIGHT_GAME // 2
         self.all_sprites.append(self.ball)
+        self.wall_player_list = arcade.SpriteList()
+        self.wall_player_list.append(self.player_sprite_1)
+        self.wall_player_list.append(self.player_sprite_2)
 
     def on_show_view(self):
         self.window.set_size(SCREEN_WIDTH_GAME, SCREEN_HEIGHT_GAME)
@@ -375,6 +382,16 @@ class GameWindow(arcade.View):
                 wall_collision_2 = True
                 break
 
+        wall_collision_ball = False
+        for wall in self.wall_list:
+            if arcade.check_for_collision(self.ball, wall):
+                wall_collision_ball = True
+                break
+        for wall in self.wall_player_list:
+            if arcade.check_for_collision(self.ball, wall):
+                wall_collision_ball = True
+                break
+
         # Если было столкновение, возвращаем игрока на старую позицию
         if wall_collision_1:
             self.hero_1_x, self.hero_1_y = old_x1, old_y1
@@ -385,6 +402,10 @@ class GameWindow(arcade.View):
             self.hero_2_x, self.hero_2_y = old_x2, old_y2
             self.player_sprite_2.center_x = self.hero_2_x
             self.player_sprite_2.center_y = self.hero_2_y
+
+        if wall_collision_ball:
+            self.ball_speed *= -1
+            wall_collision_ball = False
 
         # Ограничение в пределах экрана по горизонтали
         if self.hero_1_x < 20:
@@ -433,6 +454,12 @@ class GameWindow(arcade.View):
             self.player_sprite_2.texture = self.player_2_textures[0]
             self.current_texture_2 = 0
             self.time_since_last_frame_2 = 0
+
+        #мячик
+        if self.direction_ball == 1:
+            self.ball.center_x -= self.ball_speed
+        else:
+            self.ball.center_x += self.ball_speed
 
     def on_draw(self):
         self.clear()

@@ -236,7 +236,7 @@ class GameWindow(arcade.View):
         super().__init__()
         arcade.set_background_color(arcade.color.BLACK)
 
-        #self.texture = arcade.load_texture("apocal.jpg")
+        self.texture = arcade.load_texture("apocal.jpg")
 
         self.all_sprites = arcade.SpriteList()
 
@@ -245,8 +245,8 @@ class GameWindow(arcade.View):
         self.ball_sprite.center_y = SCREEN_HEIGHT // 2
         self.all_sprites.append(self.ball_sprite)"""
 
-        self.player1_speed = 300
-        self.player_speed = 300
+        self.player1_speed = 400
+        self.player_speed = 400
 
         self.hero_1_x = SCREEN_WIDTH_GAME - 958
         self.hero_1_y = SCREEN_HEIGHT_GAME // 2
@@ -315,7 +315,7 @@ class GameWindow(arcade.View):
             self.wall_list_up.append(wall)
 
         #мячик
-        self.ball_speed_x = 6
+        self.ball_speed_x = 5
         self.ball_speed_y = 6
         self.direction_ball = random.randint(1, 2)
         self.ball = arcade.Sprite("tennball.png", scale=0.025)
@@ -497,7 +497,7 @@ class GameWindow(arcade.View):
 
     def on_draw(self):
         self.clear()
-        #arcade.draw_texture_rect(self.texture, arcade.rect.XYWH(SCREEN_WIDTH_GAME // 2, SCREEN_HEIGHT_GAME // 2, SCREEN_WIDTH_GAME, SCREEN_HEIGHT_GAME))
+        arcade.draw_texture_rect(self.texture, arcade.rect.XYWH(SCREEN_WIDTH_GAME // 2, SCREEN_HEIGHT_GAME // 2, SCREEN_WIDTH_GAME, SCREEN_HEIGHT_GAME))
         self.wall_list_up.draw()# Сначала стены
         self.wall_list_down.draw()
         self.all_sprites.draw()  # Потом игроки

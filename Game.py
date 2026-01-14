@@ -8,6 +8,7 @@ SCREEN_WIDTH_GAME = 1000
 SCREEN_HEIGHT_GAME = 650
 SCREEN_TITLE = "GameStart"
 SECOND_WINDOW_TITLE = "Game"
+player = 0
 
 
 # ======= Класс для первого окна ======
@@ -232,6 +233,7 @@ class SecondView(arcade.View):
 
 # ===== Класс для легкой игры =======
 class GameWindow(arcade.View):
+    player = 1
     def __init__(self):
         super().__init__()
         arcade.set_background_color(arcade.color.BLACK)
@@ -471,10 +473,18 @@ class GameWindow(arcade.View):
             self.ball.center_x += self.ball_speed_x
             self.ball.center_y += self.ball_speed_y
 
-        if self.ball.center_x > (SCREEN_WIDTH_GAME + 150) or self.ball.center_x <  (-150):
+        if self.ball.center_x <  (-150):
             self.ball.center_x = SCREEN_WIDTH_GAME // 2
             self.ball.center_y = SCREEN_HEIGHT_GAME // 2
             self.direction_ball = 0
+            GameWindow.player = "Robot"
+            game_view = EndView()
+            self.window.show_view(game_view)
+        elif self.ball.center_x > (SCREEN_WIDTH_GAME + 150):
+            self.ball.center_x = SCREEN_WIDTH_GAME // 2
+            self.ball.center_y = SCREEN_HEIGHT_GAME // 2
+            self.direction_ball = 0
+            GameWindow.player = "Zombie"
             game_view = EndView()
             self.window.show_view(game_view)
 
@@ -491,6 +501,7 @@ class EndView(arcade.View):
     def __init__(self):
         super().__init__()
         arcade.set_background_color(arcade.color.DARK_BLUE_GRAY)
+        self.player = GameWindow.player
         # параметры пульсации текста
         self.time_elapsed = 0
         self.pulse_speed = 7
@@ -524,7 +535,7 @@ class EndView(arcade.View):
         original_font_size = 50
         # обновление текста (для пульсации)
         pulsating_text = arcade.Text(
-            "END",
+            f"WIN {self.player}",
             x=SCREEN_WIDTH // 2,
             y=SCREEN_HEIGHT // 2 + 100,
             color=arcade.color.YELLOW_ROSE,

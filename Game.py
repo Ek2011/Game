@@ -41,22 +41,22 @@ class WelcomeView(arcade.View):
         self.all_sprites = arcade.SpriteList()
 
         # создание спрайтов
-        self.tennisist_sprite_1 = arcade.Sprite("tennisist.png", scale=0.35)
+        self.tennisist_sprite_1 = arcade.Sprite("pictures/tennisist.png", scale=0.35)
         self.tennisist_sprite_1.center_x = SCREEN_WIDTH // 3
         self.tennisist_sprite_1.center_y = 300
         self.all_sprites.append(self.tennisist_sprite_1)
 
-        self.tennisist_sprite_2 = arcade.Sprite("tenn3.png", scale=0.2)
+        self.tennisist_sprite_2 = arcade.Sprite("pictures/tenn3.png", scale=0.2)
         self.tennisist_sprite_2.center_x = SCREEN_WIDTH - 150
         self.tennisist_sprite_2.center_y = 100
         self.all_sprites.append(self.tennisist_sprite_2)
 
-        self.start_sprite = arcade.Sprite("startbutton.png", scale=0.3)
+        self.start_sprite = arcade.Sprite("pictures/startbutton.png", scale=0.3)
         self.start_sprite.center_x = SCREEN_WIDTH // 2
         self.start_sprite.center_y = SCREEN_HEIGHT // 2 - 50
         self.all_sprites.append(self.start_sprite)
 
-        self.tennball = arcade.Sprite("tennball.png", scale=0.15)
+        self.tennball = arcade.Sprite("pictures/tennball.png", scale=0.15)
         self.tennball.center_x = SCREEN_WIDTH - 120
         self.tennball.center_y = SCREEN_HEIGHT - 120
         self.all_sprites.append(self.tennball)
@@ -161,17 +161,17 @@ class SecondView(arcade.View):
         self.all_sprites = arcade.SpriteList()
 
         # создание кнопок-спрайтов
-        self.botton_sprite_1 = arcade.Sprite("botton.png", scale=0.5)
+        self.botton_sprite_1 = arcade.Sprite("pictures/botton.png", scale=0.5)
         self.botton_sprite_1.center_x = SCREEN_WIDTH // 2
         self.botton_sprite_1.center_y = SCREEN_HEIGHT // 2 - 2.5
         self.all_sprites.append(self.botton_sprite_1)
 
-        self.botton_sprite_2 = arcade.Sprite("botton.png", scale=0.5)
+        self.botton_sprite_2 = arcade.Sprite("pictures/botton.png", scale=0.5)
         self.botton_sprite_2.center_x = SCREEN_WIDTH // 2
         self.botton_sprite_2.center_y = SCREEN_HEIGHT // 2 - 102.5
         self.all_sprites.append(self.botton_sprite_2)
 
-        self.botton_sprite_3 = arcade.Sprite("botton.png", scale=0.5)
+        self.botton_sprite_3 = arcade.Sprite("pictures/botton.png", scale=0.5)
         self.botton_sprite_3.center_x = SCREEN_WIDTH // 2
         self.botton_sprite_3.center_y = SCREEN_HEIGHT // 2 - 202.5
         self.all_sprites.append(self.botton_sprite_3)
@@ -236,7 +236,7 @@ class GameWindow(arcade.View):
         super().__init__()
         arcade.set_background_color(arcade.color.BLACK)
 
-        self.texture = arcade.load_texture("apocal.jpg")
+        self.texture = arcade.load_texture("pictures/apocal.jpg")
 
         self.all_sprites = arcade.SpriteList()
 
@@ -317,7 +317,7 @@ class GameWindow(arcade.View):
         self.ball_speed_x = 6
         self.ball_speed_y = 6
         self.direction_ball = random.randint(1, 2)
-        self.ball = arcade.Sprite("tennball.png", scale=0.025)
+        self.ball = arcade.Sprite("pictures/tennball.png", scale=0.025)
         self.ball.center_x = SCREEN_WIDTH_GAME // 2
         self.ball.center_y = SCREEN_HEIGHT_GAME // 2
         self.all_sprites.append(self.ball)
@@ -471,7 +471,7 @@ class GameWindow(arcade.View):
             self.ball.center_x += self.ball_speed_x
             self.ball.center_y += self.ball_speed_y
 
-        if self.ball.center_x > SCREEN_WIDTH_GAME + 50 or self.ball.center_x < -50:
+        if self.ball.center_x > (SCREEN_WIDTH_GAME + 150) or self.ball.center_x <  (-150):
             self.ball.center_x = SCREEN_WIDTH_GAME // 2
             self.ball.center_y = SCREEN_HEIGHT_GAME // 2
             self.direction_ball = 0
@@ -499,11 +499,11 @@ class EndView(arcade.View):
         # создание списка спрайтов
         self.all_sprites = arcade.SpriteList()
         # создание кнопок-спрайтов
-        self.botton_sprite_1 = arcade.Sprite("rebot.png", scale=0.6)
+        self.botton_sprite_1 = arcade.Sprite("pictures/rebot.png", scale=0.6)
         self.botton_sprite_1.center_x = SCREEN_WIDTH // 2 - 100
         self.botton_sprite_1.center_y = SCREEN_HEIGHT // 2 - 50
         self.all_sprites.append(self.botton_sprite_1)
-        self.botton_sprite_2 = arcade.Sprite("menu.png", scale=0.6)
+        self.botton_sprite_2 = arcade.Sprite("pictures/menu.png", scale=0.6)
         self.botton_sprite_2.center_x = SCREEN_WIDTH // 2 + 100
         self.botton_sprite_2.center_y = SCREEN_HEIGHT // 2 - 50
         self.all_sprites.append(self.botton_sprite_2)

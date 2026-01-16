@@ -1,6 +1,7 @@
 import arcade
 import math
 import random
+import os
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
@@ -11,6 +12,7 @@ SECOND_WINDOW_TITLE = "Game"
 DIFFICULTY_LEVEL = 0
 player = 0
 WINNER = ""
+SCORE = []
 
 
 # ======= Класс для первого окна ======
@@ -23,7 +25,7 @@ class WelcomeView(arcade.View):
         self.text_object = arcade.Text(
             "",
             x=SCREEN_WIDTH // 2,
-            y=SCREEN_HEIGHT // 2 + 100,
+            y=SCREEN_HEIGHT // 2 + 10,
             color=arcade.color.YELLOW_ROSE,
             font_size=100,
             font_name="Impact",
@@ -56,13 +58,40 @@ class WelcomeView(arcade.View):
 
         self.start_sprite = arcade.Sprite("pictures/startbutton.png", scale=0.3)
         self.start_sprite.center_x = SCREEN_WIDTH // 2
-        self.start_sprite.center_y = SCREEN_HEIGHT // 2 - 50
+        self.start_sprite.center_y = SCREEN_HEIGHT // 2 - 140
         self.all_sprites.append(self.start_sprite)
 
         self.tennball = arcade.Sprite("pictures/tennball.png", scale=0.15)
         self.tennball.center_x = SCREEN_WIDTH - 120
         self.tennball.center_y = SCREEN_HEIGHT - 120
         self.all_sprites.append(self.tennball)
+
+        global SCORE
+        if os.path.exists("score.txt"):
+            with open("score.txt", "r", encoding="utf-8-sig") as f:
+                k = f.readlines()
+                for score in k:
+                    SCORE.append(int(score.rstrip()))
+        else:
+            with open("score.txt", "w", encoding="utf-8-sig") as f:
+                f.write("0\n")
+                f.write("0")
+            with open("score.txt", "r", encoding="utf-8-sig") as f:
+                k = f.readlines()
+                for score in k:
+                    SCORE.append(int(score.rstrip()))
+
+        self.score = arcade.Text(
+            f"{SCORE[0]} : {SCORE[1]}",
+            x=SCREEN_WIDTH // 2,
+            y=SCREEN_HEIGHT // 2 + 140,
+            color=arcade.color.YELLOW_ROSE,
+            font_size=90,
+            font_name="Impact",
+            anchor_x="center",
+            anchor_y="center",
+            bold=False
+        )
 
     def on_update(self, delta_time):
         # обновление времени
@@ -87,6 +116,7 @@ class WelcomeView(arcade.View):
         # отрисовка текста
         self.text_object.value = "PONG"
         self.text_object.draw()
+        self.score.draw()
 
     def on_mouse_press(self, x, y, button, modifiers):
         # проверка нажатия на стартовую кнопку
@@ -265,8 +295,8 @@ class GameWindow(arcade.View):
         self.ball_sprite.center_y = SCREEN_HEIGHT // 2
         self.all_sprites.append(self.ball_sprite)"""
 
-        self.player1_speed = 400
-        self.player_speed = 400
+        self.player1_speed = 450
+        self.player_speed = 450
 
         self.hero_1_x = SCREEN_WIDTH_GAME - 960
         self.hero_1_y = SCREEN_HEIGHT_GAME // 2
@@ -363,14 +393,14 @@ class GameWindow(arcade.View):
 
         #мячик
         if DIFFICULTY_LEVEL == 1:
-            self.ball_speed_x = 3
-            self.ball_speed_y = 3
+            self.ball_speed_x = 4
+            self.ball_speed_y = 4
         elif DIFFICULTY_LEVEL == 2:
             self.ball_speed_x = 6
             self.ball_speed_y = 6
-        else:
-            self.ball_speed_x = 9
-            self.ball_speed_y = 9
+        elif DIFFICULTY_LEVEL == 3:
+            self.ball_speed_x = 8
+            self.ball_speed_y = 8
         self.direction_ball = random.randint(1, 2)
         self.ball = arcade.Sprite("pictures/tennball.png", scale=0.025)
         self.ball.center_x = SCREEN_WIDTH_GAME // 2
@@ -526,8 +556,10 @@ class GameWindow(arcade.View):
             self.ball.center_x += self.ball_speed_x
             self.ball.center_y += self.ball_speed_y
 
+
+
         global WINNER
-        if self.ball.center_x <  (-150):
+        if self.ball.center_x < (-150):
             self.ball.center_x = SCREEN_WIDTH_GAME // 2
             self.ball.center_y = SCREEN_HEIGHT_GAME // 2
             self.count_2 += 1
@@ -537,10 +569,30 @@ class GameWindow(arcade.View):
             self.count_1 += 1
         if self.count_1 == 5:
             WINNER = "player 1"
+            with open("score.txt", "w", encoding="utf-8-sig") as f:
+                if DIFFICULTY_LEVEL == 1:
+                    f.write(f"{SCORE[0] + 1}\n")
+                    f.write(f"{SCORE[1]}")
+                elif DIFFICULTY_LEVEL == 2:
+                    f.write(f"{SCORE[0] + 3}\n")
+                    f.write(f"{SCORE[1]}")
+                elif DIFFICULTY_LEVEL == 3:
+                    f.write(f"{SCORE[0] + 5}\n")
+                    f.write(f"{SCORE[1]}")
             game_view = EndView()
             self.window.show_view(game_view)
-        if self.count_2 == 5:
+        elif self.count_2 == 5:
             WINNER = "player 2"
+            with open("score.txt", "w", encoding="utf-8-sig") as f:
+                if DIFFICULTY_LEVEL == 1:
+                    f.write(f"{SCORE[0]}\n")
+                    f.write(f"{SCORE[1] + 1}")
+                elif DIFFICULTY_LEVEL == 2:
+                    f.write(f"{SCORE[0]}\n")
+                    f.write(f"{SCORE[1] + 3}")
+                elif DIFFICULTY_LEVEL == 3:
+                    f.write(f"{SCORE[0]}\n")
+                    f.write(f"{SCORE[1] + 5}")
             game_view = EndView()
             self.window.show_view(game_view)
 
@@ -603,6 +655,12 @@ class EndView(arcade.View):
         self.botton_sprite_2.center_y = SCREEN_HEIGHT // 2 - 50
         self.all_sprites.append(self.botton_sprite_2)
 
+        with open("score.txt", "r", encoding="utf-8-sig") as f:
+            k = f.readlines()
+            SCORE.clear()
+            for score in k:
+                SCORE.append(int(score.rstrip()))
+
     def on_show_view(self):
         self.window.set_size(SCREEN_WIDTH, SCREEN_HEIGHT)
 
@@ -639,7 +697,7 @@ class EndView(arcade.View):
             game_view = GameWindow()
             self.window.show_view(game_view)
         elif self.botton_sprite_2.collides_with_point((x, y)):
-            game_view = SecondView()
+            game_view = WelcomeView()
             self.window.show_view(game_view)
 
 

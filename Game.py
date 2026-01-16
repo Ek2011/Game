@@ -10,6 +10,7 @@ SCREEN_TITLE = "GameStart"
 SECOND_WINDOW_TITLE = "Game"
 DIFFICULTY_LEVEL = 0
 player = 0
+WINNER = ""
 
 
 # ======= Класс для первого окна ======
@@ -243,6 +244,8 @@ class GameWindow(arcade.View):
     player = 1
     def __init__(self):
         super().__init__()
+        self.count_1 = 0
+        self.count_2 = 0
         arcade.set_background_color(arcade.color.BLACK)
 
 
@@ -360,14 +363,14 @@ class GameWindow(arcade.View):
 
         #мячик
         if DIFFICULTY_LEVEL == 1:
-            self.ball_speed_x = 2
-            self.ball_speed_y = 2
+            self.ball_speed_x = 3
+            self.ball_speed_y = 3
         elif DIFFICULTY_LEVEL == 2:
-            self.ball_speed_x = 5
-            self.ball_speed_y = 5
+            self.ball_speed_x = 6
+            self.ball_speed_y = 6
         else:
-            self.ball_speed_x = 7
-            self.ball_speed_y = 7
+            self.ball_speed_x = 9
+            self.ball_speed_y = 9
         self.direction_ball = random.randint(1, 2)
         self.ball = arcade.Sprite("pictures/tennball.png", scale=0.025)
         self.ball.center_x = SCREEN_WIDTH_GAME // 2
@@ -523,20 +526,24 @@ class GameWindow(arcade.View):
             self.ball.center_x += self.ball_speed_x
             self.ball.center_y += self.ball_speed_y
 
+        global WINNER
         if self.ball.center_x <  (-150):
             self.ball.center_x = SCREEN_WIDTH_GAME // 2
             self.ball.center_y = SCREEN_HEIGHT_GAME // 2
-            self.direction_ball = 0
-            GameWindow.player = "Robot"
-            game_view = EndView()
-            self.window.show_view(game_view)
+            self.count_2 += 1
         elif self.ball.center_x > (SCREEN_WIDTH_GAME + 150):
             self.ball.center_x = SCREEN_WIDTH_GAME // 2
             self.ball.center_y = SCREEN_HEIGHT_GAME // 2
-            self.direction_ball = 0
-            GameWindow.player = "Zombie"
+            self.count_1 += 1
+        if self.count_1 == 5:
+            WINNER = "player 1"
             game_view = EndView()
             self.window.show_view(game_view)
+        if self.count_2 == 5:
+            WINNER = "player 2"
+            game_view = EndView()
+            self.window.show_view(game_view)
+
 
 
     def on_draw(self):
@@ -546,6 +553,33 @@ class GameWindow(arcade.View):
         self.wall_list.draw()
         self.all_sprites.draw()  # Потом игроки
         """self.ball.draw()"""
+        score_text = arcade.Text(f"{self.count_1} : {self.count_2}", SCREEN_WIDTH_GAME // 2,
+            SCREEN_HEIGHT_GAME - 60,
+            arcade.color.YELLOW_ROSE,
+            font_size=48,
+            font_name="Impact",
+            anchor_x="center",
+            bold=False)
+        score_text.draw()
+
+        player_1_text = arcade.Text("player 1", 100,
+                                 SCREEN_HEIGHT_GAME - 50,
+                                 arcade.color.YELLOW_ROSE,
+                                 font_size=40,
+                                 font_name="Impact",
+                                 anchor_x="center",
+                                 bold=False)
+        player_2_text = arcade.Text("player 2", SCREEN_WIDTH_GAME - 100,
+                                    SCREEN_HEIGHT_GAME - 50,
+                                    arcade.color.YELLOW_ROSE,
+                                    font_size=40,
+                                    font_name="Impact",
+                                    anchor_x="center",
+                                    bold=False)
+        score_text.draw()
+        player_1_text.draw()
+        player_2_text.draw()
+
 
 class EndView(arcade.View):
     def __init__(self):
@@ -585,7 +619,7 @@ class EndView(arcade.View):
         original_font_size = 50
         # обновление текста (для пульсации)
         pulsating_text = arcade.Text(
-            f"WIN {self.player}",
+            f"{WINNER} WINS!",
             x=SCREEN_WIDTH // 2,
             y=SCREEN_HEIGHT // 2 + 100,
             color=arcade.color.YELLOW_ROSE,

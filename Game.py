@@ -25,7 +25,7 @@ class WelcomeView(arcade.View):
         self.text_object = arcade.Text(
             "",
             x=SCREEN_WIDTH // 2,
-            y=SCREEN_HEIGHT // 2 + 10,
+            y=SCREEN_HEIGHT // 2 + 15,
             color=arcade.color.YELLOW_ROSE,
             font_size=100,
             font_name="Impact",
@@ -61,6 +61,11 @@ class WelcomeView(arcade.View):
         self.start_sprite.center_y = SCREEN_HEIGHT // 2 - 140
         self.all_sprites.append(self.start_sprite)
 
+        self.setup_sprite = arcade.Sprite("pictures/setup.png", scale=0.10)
+        self.setup_sprite.center_x = 40
+        self.setup_sprite.center_y = SCREEN_HEIGHT - 40
+        self.all_sprites.append(self.setup_sprite)
+
         self.tennball = arcade.Sprite("pictures/tennball.png", scale=0.15)
         self.tennball.center_x = SCREEN_WIDTH - 120
         self.tennball.center_y = SCREEN_HEIGHT - 120
@@ -84,9 +89,9 @@ class WelcomeView(arcade.View):
         self.score = arcade.Text(
             f"{SCORE[0]} : {SCORE[1]}",
             x=SCREEN_WIDTH // 2,
-            y=SCREEN_HEIGHT // 2 + 140,
+            y=SCREEN_HEIGHT // 2 + 150,
             color=arcade.color.YELLOW_ROSE,
-            font_size=90,
+            font_size=85,
             font_name="Impact",
             anchor_x="center",
             anchor_y="center",
@@ -120,12 +125,12 @@ class WelcomeView(arcade.View):
 
     def on_mouse_press(self, x, y, button, modifiers):
         # проверка нажатия на стартовую кнопку
-        if (
-                abs(x - self.start_sprite.center_x) < self.start_sprite.width / 2
-                and abs(y - self.start_sprite.center_y) < self.start_sprite.height / 2
-        ):
+        if self.start_sprite.collides_with_point((x, y)):
             # открытие второго окна
             game_view = SecondView()
+            self.window.show_view(game_view)
+        elif self.setup_sprite.collides_with_point((x, y)):
+            game_view = SetupView()
             self.window.show_view(game_view)
 
 
@@ -696,6 +701,87 @@ class EndView(arcade.View):
         if self.botton_sprite_1.collides_with_point((x, y)):
             game_view = GameWindow()
             self.window.show_view(game_view)
+        elif self.botton_sprite_2.collides_with_point((x, y)):
+            game_view = WelcomeView()
+            self.window.show_view(game_view)
+
+
+class SetupView(arcade.View):
+    def __init__(self):
+        super().__init__()
+        arcade.set_background_color(arcade.color.DARK_BLUE_GRAY)
+        # параметры пульсации текста
+        self.time_elapsed = 0
+        self.pulse_speed = 7
+        self.pulse_min_scale = 0.9
+        self.pulse_max_scale = 1.5
+        # создание списка спрайтов
+        self.all_sprites = arcade.SpriteList()
+        # создание кнопок-спрайтов
+        self.botton_sprite_1 = arcade.Sprite("pictures/botton.png", scale=0.8)
+        self.botton_sprite_1.center_x = SCREEN_WIDTH // 2 - 130
+        self.botton_sprite_1.center_y = SCREEN_HEIGHT // 2 - 50
+        self.all_sprites.append(self.botton_sprite_1)
+        self.botton_sprite_2 = arcade.Sprite("pictures/menu.png", scale=0.6)
+        self.botton_sprite_2.center_x = SCREEN_WIDTH // 2 + 130
+        self.botton_sprite_2.center_y = SCREEN_HEIGHT // 2 - 50
+        self.all_sprites.append(self.botton_sprite_2)
+
+        self.clear_text = arcade.Text(
+            "Clear score",
+            x=SCREEN_WIDTH // 2 - 130,
+            y=SCREEN_HEIGHT // 2 - 50,
+            color=arcade.color.YELLOW_ROSE,
+            font_size=30,
+            font_name="Impact",
+            anchor_x="center",
+            anchor_y="center",
+            bold=False
+        )
+
+    def on_show_view(self):
+        self.window.set_size(SCREEN_WIDTH, SCREEN_HEIGHT)
+
+    def on_update(self, delta_time):
+        # обновление времени
+        self.time_elapsed += delta_time
+
+    def on_draw(self):
+        self.clear()
+        # формула для пульсации текста
+        pulse_factor = (math.sin(self.time_elapsed * self.pulse_speed) + 1) / 2  # от 0 до 1
+        current_scale = self.pulse_min_scale + (self.pulse_max_scale - self.pulse_min_scale) * pulse_factor
+        # значальный размер шрифта
+        original_font_size = 50
+        # обновление текста (для пульсации)
+        pulsating_text = arcade.Text(
+            f"SETUP",
+            x=SCREEN_WIDTH // 2,
+            y=SCREEN_HEIGHT // 2 + 100,
+            color=arcade.color.YELLOW_ROSE,
+            font_size=int(original_font_size * current_scale),
+            font_name="Impact",
+            anchor_x="center",
+            anchor_y="center",
+            bold=False
+        )
+        # отрисовка пульсирующего текста
+        pulsating_text.draw()
+        self.all_sprites.draw()
+        self.clear_text.draw()
+
+    def on_mouse_press(self, x, y, button, modifiers):
+        # проверка нажатия на кнопку сложности
+        if self.botton_sprite_1.collides_with_point((x, y)):
+            with open("score.txt", "w", encoding="utf-8-sig") as f:
+                f.write("0\n")
+                f.write("0")
+            with open("score.txt", "r", encoding="utf-8-sig") as f:
+                k = f.readlines()
+                SCORE.clear()
+                for score in k:
+                    SCORE.append(int(score.rstrip()))
+            print(1)
         elif self.botton_sprite_2.collides_with_point((x, y)):
             game_view = WelcomeView()
             self.window.show_view(game_view)

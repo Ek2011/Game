@@ -781,7 +781,6 @@ class SetupView(arcade.View):
                 SCORE.clear()
                 for score in k:
                     SCORE.append(int(score.rstrip()))
-            print(1)
         elif self.botton_sprite_2.collides_with_point((x, y)):
             game_view = WelcomeView()
             self.window.show_view(game_view)
@@ -792,7 +791,6 @@ def main():
     # Создаем и показываем первый View
     start_view = WelcomeView()
     window.show_view(start_view)
-
     arcade.run()
 
 

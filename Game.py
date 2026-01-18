@@ -437,6 +437,11 @@ class GameWindow(arcade.View):
         self.wall_player_list.append(self.player_sprite_1)
         self.wall_player_list.append(self.player_sprite_2)
 
+        self.leave_button_sprite = arcade.Sprite("pictures/botton.png", scale=0.5)
+        self.leave_button_sprite.center_x = SCREEN_WIDTH_GAME // 2
+        self.leave_button_sprite.center_y = 30
+        self.all_sprites.append(self.leave_button_sprite)
+
     def on_show_view(self):
         self.window.set_size(SCREEN_WIDTH_GAME, SCREEN_HEIGHT_GAME)
 
@@ -640,6 +645,14 @@ class GameWindow(arcade.View):
             anchor_x="center",
             bold=False)
         score_text.draw()
+
+        leave_text = arcade.Text("LEAVE",SCREEN_WIDTH_GAME // 2, 6,
+            arcade.color.YELLOW_ROSE,
+            font_size=48,
+            font_name="Impact",
+            anchor_x="center",
+            bold=False)
+        leave_text.draw()
 
         player_1_text = arcade.Text("player 1", 100,
                                  SCREEN_HEIGHT_GAME - 50,

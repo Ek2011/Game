@@ -311,6 +311,10 @@ class SecondView(arcade.View):
         elif self.botton_sprite_4.collides_with_point((x, y)):
             game_view = WelcomeView()
             self.window.show_view(game_view)
+        elif self.botton_sprite_5.collides_with_point((x, y)):
+            DIFFICULTY_LEVEL = 4
+            game_view = GameWindow()
+            self.window.show_view(game_view)
 
     def on_show_view(self):
         self.window.set_size(SCREEN_WIDTH, SCREEN_HEIGHT)
@@ -336,11 +340,9 @@ class GameWindow(arcade.View):
             self.texture = arcade.load_texture("pictures/city.jpg")
         if DIFFICULTY_LEVEL == 3:
             self.texture = arcade.load_texture("pictures/apocal.jpg")
+        if DIFFICULTY_LEVEL == 4:
+            self.texture = arcade.load_texture("pictures/newspace.png")
 
-        """self.ball_sprite = arcade.Sprite("ball.png", scale=0.5)
-        self.ball_sprite.center_x = SCREEN_WIDTH // 2
-        self.ball_sprite.center_y = SCREEN_HEIGHT // 2
-        self.all_sprites.append(self.ball_sprite)"""
 
         self.player1_speed = 450
         self.player_speed = 450
@@ -363,10 +365,14 @@ class GameWindow(arcade.View):
                 texture = arcade.load_texture(
                     f":resources:images/animated_characters/female_adventurer/femaleAdventurer_walk{k}.png"
                 )
-            else:
+            elif DIFFICULTY_LEVEL == 3:
+                texture = arcade.load_texture(
+                    f":resources:images/animated_characters/female_adventurer/femaleAdventurer_walk{k}.png"
+                )
+            elif DIFFICULTY_LEVEL == 4:
                 texture = arcade.load_texture(
                     f":resources:images/animated_characters/robot/robot_walk{k}.png"
-                )
+                                              )
             self.player_1_textures.append(texture)
         for i in range(8):
             if DIFFICULTY_LEVEL == 1:
@@ -377,9 +383,13 @@ class GameWindow(arcade.View):
                 texture = arcade.load_texture(
                     f":resources:images/animated_characters/male_adventurer/maleAdventurer_walk{i}.png"
                 )
-            else:
+            elif DIFFICULTY_LEVEL == 3:
                 texture = arcade.load_texture(
                     f":resources:images/animated_characters/zombie/zombie_walk{i}.png"
+                )
+            elif DIFFICULTY_LEVEL == 4:
+                texture = arcade.load_texture(
+                    f":resources:images/animated_characters/robot/robot_walk{i}.png"
                 )
             self.player_2_textures.append(texture)
 
@@ -416,8 +426,10 @@ class GameWindow(arcade.View):
                 wall = arcade.Sprite(":resources:images/tiles/grassMid.png", 0.4)
             elif DIFFICULTY_LEVEL == 2:
                 wall = arcade.Sprite(":resources:images/tiles/stoneMid.png", 0.4)
-            else:
+            elif DIFFICULTY_LEVEL == 3:
                 wall = arcade.Sprite(":resources:images/tiles/lavaTop_low.png", 0.4)
+            elif DIFFICULTY_LEVEL == 4:
+                wall = arcade.Sprite(":resources:images/tiles/planetMid.png", 0.4)
             wall.center_x = x
             wall.center_y = 32
             wall.width = 64
@@ -430,8 +442,11 @@ class GameWindow(arcade.View):
                 wall = arcade.Sprite(":resources:images/tiles/water.png", 0.4)
             elif DIFFICULTY_LEVEL == 2:
                 wall = arcade.Sprite(":resources:images/tiles/snowCenter.png", 0.4)
-            else:
+            elif DIFFICULTY_LEVEL == 3:
                 wall = arcade.Sprite(":resources:images/tiles/planetCenter.png", 0.4)
+            elif DIFFICULTY_LEVEL == 4:
+                wall = arcade.Sprite(":resources:images/tiles/planetCenter.png", 0.4)
+
             wall.center_x = x
             wall.center_y = SCREEN_HEIGHT_GAME - 32  # Правильная высота
             wall.width = 64
@@ -448,6 +463,9 @@ class GameWindow(arcade.View):
         elif DIFFICULTY_LEVEL == 3:
             self.ball_speed_x = 8
             self.ball_speed_y = 8
+        elif DIFFICULTY_LEVEL == 4:
+            self.ball_speed_x = 12
+            self.ball_speed_y = 12
         self.direction_ball = random.randint(1, 2)
         self.ball = arcade.Sprite("pictures/tennball.png", scale=0.025)
         self.ball.center_x = SCREEN_WIDTH_GAME // 2
@@ -636,6 +654,9 @@ class GameWindow(arcade.View):
                 elif DIFFICULTY_LEVEL == 3:
                     f.write(f"{SCORE[0] + 5}\n")
                     f.write(f"{SCORE[1]}")
+                elif DIFFICULTY_LEVEL == 4:
+                    f.write(f"{SCORE[0] + 7}\n")
+                    f.write(f"{SCORE[1]}")
             game_view = EndView()
             self.window.show_view(game_view)
         elif self.count_2 == 5:
@@ -650,6 +671,9 @@ class GameWindow(arcade.View):
                 elif DIFFICULTY_LEVEL == 3:
                     f.write(f"{SCORE[0]}\n")
                     f.write(f"{SCORE[1] + 5}")
+                elif DIFFICULTY_LEVEL == 4:
+                    f.write(f"{SCORE[0]}\n")
+                    f.write(f"{SCORE[1] + 7}")
             game_view = EndView()
             self.window.show_view(game_view)
 

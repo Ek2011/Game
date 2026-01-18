@@ -195,6 +195,18 @@ class SecondView(arcade.View):
             bold=False
         )
 
+        self.back_text = arcade.Text(
+            "",
+            x=100,
+            y=SCREEN_HEIGHT // 2 - 200,
+            color=arcade.color.YELLOW_ROSE,
+            font_size=30,
+            font_name="Impact",
+            anchor_x="center",
+            anchor_y="center",
+            bold=False
+        )
+
         # создание списка спрайтов
         self.all_sprites = arcade.SpriteList()
 
@@ -214,6 +226,11 @@ class SecondView(arcade.View):
         self.botton_sprite_3.center_y = SCREEN_HEIGHT // 2 - 202.5
         self.all_sprites.append(self.botton_sprite_3)
 
+        self.botton_sprite_4 = arcade.Sprite("pictures/botton.png", scale=0.5)
+        self.botton_sprite_4.center_x = 100
+        self.botton_sprite_4.center_y = SCREEN_HEIGHT // 2 - 202.5
+        self.all_sprites.append(self.botton_sprite_4)
+
     def on_update(self, delta_time):
         # обновление времени
         self.time_elapsed += delta_time
@@ -226,6 +243,7 @@ class SecondView(arcade.View):
         self.easy_text.value = "EASY"
         self.medium_text.value = "MEDIUM"
         self.hard_text.value = "HARD"
+        self.back_text.value = "BACK"
 
         # формула для пульсации текста
         pulse_factor = (math.sin(self.time_elapsed * self.pulse_speed) + 1) / 2  # от 0 до 1
@@ -256,6 +274,7 @@ class SecondView(arcade.View):
         self.easy_text.draw()
         self.medium_text.draw()
         self.hard_text.draw()
+        self.back_text.draw()
 
     def on_mouse_press(self, x, y, button, modifiers):
         global DIFFICULTY_LEVEL
@@ -271,6 +290,9 @@ class SecondView(arcade.View):
         elif self.botton_sprite_3.collides_with_point((x, y)):
             DIFFICULTY_LEVEL = 3
             game_view = GameWindow()
+            self.window.show_view(game_view)
+        elif self.botton_sprite_4.collides_with_point((x, y)):
+            game_view = WelcomeView()
             self.window.show_view(game_view)
 
 

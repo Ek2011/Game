@@ -685,7 +685,6 @@ class GameWindow(arcade.View):
         # Сначала стены
         self.wall_list.draw()
         self.all_sprites.draw()  # Потом игроки
-        """self.ball.draw()"""
         score_text = arcade.Text(f"{self.count_1} : {self.count_2}", SCREEN_WIDTH_GAME // 2,
             SCREEN_HEIGHT_GAME - 60,
             arcade.color.YELLOW_ROSE,

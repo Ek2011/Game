@@ -150,7 +150,7 @@ class SecondView(arcade.View):
         self.choose_text = arcade.Text(
             "",
             x=SCREEN_WIDTH // 2,
-            y=SCREEN_HEIGHT // 2 + 100,
+            y=SCREEN_HEIGHT // 2 + 200,
             color=arcade.color.YELLOW_ROSE,
             font_size=50,
             font_name="Impact",
@@ -162,7 +162,7 @@ class SecondView(arcade.View):
         self.easy_text = arcade.Text(
             "",
             x=SCREEN_WIDTH // 2,
-            y=SCREEN_HEIGHT // 2,
+            y=SCREEN_HEIGHT // 2 + 100,
             color=arcade.color.YELLOW_ROSE,
             font_size=30,
             font_name="Impact",
@@ -174,7 +174,7 @@ class SecondView(arcade.View):
         self.medium_text = arcade.Text(
             "",
             x=SCREEN_WIDTH // 2,
-            y=SCREEN_HEIGHT // 2 - 100,
+            y=SCREEN_HEIGHT // 2,
             color=arcade.color.YELLOW_ROSE,
             font_size=30,
             font_name="Impact",
@@ -186,7 +186,7 @@ class SecondView(arcade.View):
         self.hard_text = arcade.Text(
             "",
             x=SCREEN_WIDTH // 2,
-            y=SCREEN_HEIGHT // 2 - 200,
+            y=SCREEN_HEIGHT // 2 - 100,
             color=arcade.color.YELLOW_ROSE,
             font_size=30,
             font_name="Impact",
@@ -207,29 +207,44 @@ class SecondView(arcade.View):
             bold=False
         )
 
+        self.insane_text = arcade.Text("",
+            x=SCREEN_WIDTH // 2,
+            y=SCREEN_HEIGHT // 2 - 200,
+            color=arcade.color.YELLOW_ROSE,
+            font_size=30,
+            font_name="Impact",
+            anchor_x="center",
+            anchor_y="center",
+            bold=False)
+
         # создание списка спрайтов
         self.all_sprites = arcade.SpriteList()
 
         # создание кнопок-спрайтов
         self.botton_sprite_1 = arcade.Sprite("pictures/botton.png", scale=0.5)
         self.botton_sprite_1.center_x = SCREEN_WIDTH // 2
-        self.botton_sprite_1.center_y = SCREEN_HEIGHT // 2 - 2.5
+        self.botton_sprite_1.center_y = SCREEN_HEIGHT // 2 - 2.5 + 100
         self.all_sprites.append(self.botton_sprite_1)
 
         self.botton_sprite_2 = arcade.Sprite("pictures/botton.png", scale=0.5)
         self.botton_sprite_2.center_x = SCREEN_WIDTH // 2
-        self.botton_sprite_2.center_y = SCREEN_HEIGHT // 2 - 102.5
+        self.botton_sprite_2.center_y = SCREEN_HEIGHT // 2 - 102.5 + 100
         self.all_sprites.append(self.botton_sprite_2)
 
         self.botton_sprite_3 = arcade.Sprite("pictures/botton.png", scale=0.5)
         self.botton_sprite_3.center_x = SCREEN_WIDTH // 2
-        self.botton_sprite_3.center_y = SCREEN_HEIGHT // 2 - 202.5
+        self.botton_sprite_3.center_y = SCREEN_HEIGHT // 2 - 202.5 + 100
         self.all_sprites.append(self.botton_sprite_3)
 
         self.botton_sprite_4 = arcade.Sprite("pictures/botton.png", scale=0.5)
         self.botton_sprite_4.center_x = 100
         self.botton_sprite_4.center_y = SCREEN_HEIGHT // 2 - 202.5
         self.all_sprites.append(self.botton_sprite_4)
+
+        self.botton_sprite_5 = arcade.Sprite("pictures/botton.png", scale=0.5)
+        self.botton_sprite_5.center_x = SCREEN_WIDTH // 2
+        self.botton_sprite_5.center_y = SCREEN_HEIGHT // 2 - 202.5
+        self.all_sprites.append(self.botton_sprite_5)
 
     def on_update(self, delta_time):
         # обновление времени
@@ -244,6 +259,7 @@ class SecondView(arcade.View):
         self.medium_text.value = "MEDIUM"
         self.hard_text.value = "HARD"
         self.back_text.value = "BACK"
+        self.insane_text.value = "INSANE"
 
         # формула для пульсации текста
         pulse_factor = (math.sin(self.time_elapsed * self.pulse_speed) + 1) / 2  # от 0 до 1
@@ -256,7 +272,7 @@ class SecondView(arcade.View):
         pulsating_text = arcade.Text(
             "CHOOSE DIFFICULTY",
             x=SCREEN_WIDTH // 2,
-            y=SCREEN_HEIGHT // 2 + 100,
+            y=SCREEN_HEIGHT // 2 + 200,
             color=arcade.color.YELLOW_ROSE,
             font_size=int(original_font_size * current_scale),
             font_name="Impact",
@@ -275,6 +291,7 @@ class SecondView(arcade.View):
         self.medium_text.draw()
         self.hard_text.draw()
         self.back_text.draw()
+        self.insane_text.draw()
 
     def on_mouse_press(self, x, y, button, modifiers):
         global DIFFICULTY_LEVEL
@@ -294,6 +311,9 @@ class SecondView(arcade.View):
         elif self.botton_sprite_4.collides_with_point((x, y)):
             game_view = WelcomeView()
             self.window.show_view(game_view)
+
+    def on_show_view(self):
+        self.window.set_size(SCREEN_WIDTH, SCREEN_HEIGHT)
 
 
 # ===== Класс для легкой игры =======
@@ -451,6 +471,11 @@ class GameWindow(arcade.View):
     def on_key_release(self, key, modifiers):
         if key in self.keys_pressed:
             self.keys_pressed.remove(key)
+
+    def on_mouse_press(self, x, y, button, modifiers):
+        if self.leave_button_sprite.collides_with_point((x, y)):
+            game_view = SecondView()
+            self.window.show_view(game_view)
 
     def on_update(self, delta_time):
         dx1, dy1 = 0, 0

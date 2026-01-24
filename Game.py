@@ -748,6 +748,11 @@ class EndView(arcade.View):
             SCORE.clear()
             for score in k:
                 SCORE.append(int(score.rstrip()))
+        # конфети
+        self.confetti_list = arcade.SpriteList()
+        for _ in range(50):
+            p = Confetti(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
+            self.confetti_list.append(p)
 
     def on_show_view(self):
         self.window.set_size(SCREEN_WIDTH, SCREEN_HEIGHT)
@@ -755,6 +760,8 @@ class EndView(arcade.View):
     def on_update(self, delta_time):
         # обновление времени
         self.time_elapsed += delta_time
+        # обновление конфети
+        self.confetti_list.update(delta_time)
 
     def on_draw(self):
         self.clear()
@@ -778,6 +785,8 @@ class EndView(arcade.View):
         # отрисовка пульсирующего текста
         pulsating_text.draw()
         self.all_sprites.draw()
+        # отрисовка конфети
+        self.confetti_list.draw()
 
     def on_mouse_press(self, x, y, button, modifiers):
         # проверка нажатия на кнопку сложности
@@ -867,6 +876,48 @@ class SetupView(arcade.View):
         elif self.botton_sprite_2.collides_with_point((x, y)):
             game_view = WelcomeView()
             self.window.show_view(game_view)
+
+
+class Confetti(arcade.Sprite):
+    def __init__(self, x, y):
+        # Создаем цветную текстуру
+        color = random.choice([
+            arcade.color.RED, arcade.color.GOLD, arcade.color.BLUE,
+            arcade.color.GREEN, arcade.color.HOT_PINK, arcade.color.AZURE
+        ])
+        texture = arcade.make_soft_square_texture(10, color)
+        super().__init__(texture)
+
+        self.center_x = x
+        self.center_y = y
+
+        # Скорость и вращение
+        self.change_x = random.uniform(-5, 5)
+        self.change_y = random.uniform(2, 8)
+        self.change_angle = random.uniform(-15, 15)
+
+        # Таймер жизни
+        self.lifetime = 5.0
+
+    def update(self, delta_time: float = 1 / 60):
+        # Движение
+        self.center_x += self.change_x
+        self.center_y += self.change_y
+
+        # Гравитация (пропорционально времени кадра)
+        self.change_y -= 0.2
+        self.angle += self.change_angle
+
+        # Уменьшаем время жизни
+        self.lifetime -= delta_time
+
+        # Плавное исчезновение в последнюю секунду
+        if self.lifetime <= 1.0:
+            self.alpha = max(0, int(self.lifetime * 255))
+
+        # Удаление
+        if self.lifetime <= 0:
+            self.remove_from_sprite_lists()
 
 
 def main():

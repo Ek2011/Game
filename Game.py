@@ -1,4 +1,5 @@
 import arcade
+import arcade.gui
 import math
 import random
 import os
@@ -13,6 +14,7 @@ DIFFICULTY_LEVEL = 0
 player = 0
 WINNER = ""
 SCORE = []
+Round = 0
 
 
 # ======= Класс для первого окна ======
@@ -60,11 +62,6 @@ class WelcomeView(arcade.View):
         self.start_sprite.center_x = SCREEN_WIDTH // 2
         self.start_sprite.center_y = SCREEN_HEIGHT // 2 - 140
         self.all_sprites.append(self.start_sprite)
-
-        self.setup_sprite = arcade.Sprite("pictures/setup.png", scale=0.10)
-        self.setup_sprite.center_x = 40
-        self.setup_sprite.center_y = SCREEN_HEIGHT - 40
-        self.all_sprites.append(self.setup_sprite)
 
         self.tennball = arcade.Sprite("pictures/tennball.png", scale=0.15)
         self.tennball.center_x = SCREEN_WIDTH - 120
@@ -127,10 +124,67 @@ class WelcomeView(arcade.View):
         # проверка нажатия на стартовую кнопку
         if self.start_sprite.collides_with_point((x, y)):
             # открытие второго окна
-            game_view = SecondView()
+            game_view = RoundView()
             self.window.show_view(game_view)
-        elif self.setup_sprite.collides_with_point((x, y)):
-            game_view = SetupView()
+
+# ====== Класс дл экрана выбора раундов =====
+class RoundView(arcade.View):
+    def __init__(self):
+        super().__init__()
+        self.all_sprites = arcade.SpriteList()
+        # Создаем менеджер GUI
+        self.manager = arcade.gui.UIManager()
+        self.manager.enable()
+
+        # Создаем поле ввода
+        self.input_field = arcade.gui.UIInputText(
+            x=SCREEN_WIDTH // 2 - 150, y=SCREEN_HEIGHT // 2 - 45, width=300, height=30, text=""
+        )
+        self.manager.add(self.input_field)
+
+        self.botton_sprite = arcade.Sprite("pictures/botton.png", scale=0.5)
+        self.botton_sprite.center_x = SCREEN_WIDTH // 2
+        self.botton_sprite.center_y = SCREEN_HEIGHT // 2 - 190
+        self.all_sprites.append(self.botton_sprite)
+
+        self.round_text = arcade.Text(
+            "Введите кол-во раундов",
+            x=SCREEN_WIDTH // 2,
+            y=SCREEN_HEIGHT // 2 + 90,
+            color=arcade.color.YELLOW_ROSE,
+            font_size=50,
+            font_name="Impact",
+            anchor_x="center",
+            anchor_y="center",
+            bold=False
+        )
+
+        self.Start_text = arcade.Text(
+            "Start",
+            x=SCREEN_WIDTH // 2,
+            y=SCREEN_HEIGHT // 2 - 185,
+            color=arcade.color.YELLOW_ROSE,
+            font_size=40,
+            font_name="Impact",
+            anchor_x="center",
+            anchor_y="center",
+            bold=False
+        )
+
+    def on_draw(self):
+        self.clear()
+        self.manager.draw()
+        self.all_sprites.draw()
+        self.round_text.draw()
+        self.Start_text.draw()
+
+    def on_mouse_press(self, x, y, button, modifiers):
+        global Round
+        # проверка нажатия на кнопку сложности
+        if self.botton_sprite.collides_with_point((x, y)):
+            Round = int(self.input_field.text)
+            self.manager.disable()
+            game_view = SecondView()
             self.window.show_view(game_view)
 
 
@@ -246,6 +300,11 @@ class SecondView(arcade.View):
         self.botton_sprite_5.center_y = SCREEN_HEIGHT // 2 - 202.5
         self.all_sprites.append(self.botton_sprite_5)
 
+        self.setup_sprite = arcade.Sprite("pictures/setup.png", scale=0.10)
+        self.setup_sprite.center_x = 40
+        self.setup_sprite.center_y = SCREEN_HEIGHT - 40
+        self.all_sprites.append(self.setup_sprite)
+
     def on_update(self, delta_time):
         # обновление времени
         self.time_elapsed += delta_time
@@ -315,12 +374,15 @@ class SecondView(arcade.View):
             DIFFICULTY_LEVEL = 4
             game_view = GameWindow()
             self.window.show_view(game_view)
+        elif self.setup_sprite.collides_with_point((x, y)):
+            game_view = SetupView()
+            self.window.show_view(game_view)
 
     def on_show_view(self):
         self.window.set_size(SCREEN_WIDTH, SCREEN_HEIGHT)
 
 
-# ===== Класс для легкой игры =======
+# ===== Класс для игры =======
 class GameWindow(arcade.View):
     player = 1
     def __init__(self):
@@ -634,6 +696,7 @@ class GameWindow(arcade.View):
 
 
         global WINNER
+        global Round
         if self.ball.center_x < (-150):
             self.ball.center_x = SCREEN_WIDTH_GAME // 2
             self.ball.center_y = SCREEN_HEIGHT_GAME // 2
@@ -642,7 +705,7 @@ class GameWindow(arcade.View):
             self.ball.center_x = SCREEN_WIDTH_GAME // 2
             self.ball.center_y = SCREEN_HEIGHT_GAME // 2
             self.count_1 += 1
-        if self.count_1 == 5:
+        if self.count_1 == int(Round):
             WINNER = "player 1"
             with open("score.txt", "w", encoding="utf-8-sig") as f:
                 if DIFFICULTY_LEVEL == 1:
@@ -659,7 +722,7 @@ class GameWindow(arcade.View):
                     f.write(f"{SCORE[1]}")
             game_view = EndView()
             self.window.show_view(game_view)
-        elif self.count_2 == 5:
+        elif self.count_2 == int(Round):
             WINNER = "player 2"
             with open("score.txt", "w", encoding="utf-8-sig") as f:
                 if DIFFICULTY_LEVEL == 1:
@@ -750,7 +813,7 @@ class EndView(arcade.View):
                 SCORE.append(int(score.rstrip()))
         # конфети
         self.confetti_list = arcade.SpriteList()
-        for _ in range(50):
+        for _ in range(150):
             p = Confetti(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
             self.confetti_list.append(p)
 
@@ -794,7 +857,7 @@ class EndView(arcade.View):
             game_view = GameWindow()
             self.window.show_view(game_view)
         elif self.botton_sprite_2.collides_with_point((x, y)):
-            game_view = WelcomeView()
+            game_view = SecondView()
             self.window.show_view(game_view)
 
 
@@ -874,7 +937,7 @@ class SetupView(arcade.View):
                 for score in k:
                     SCORE.append(int(score.rstrip()))
         elif self.botton_sprite_2.collides_with_point((x, y)):
-            game_view = WelcomeView()
+            game_view = SecondView()
             self.window.show_view(game_view)
 
 

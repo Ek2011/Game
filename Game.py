@@ -15,6 +15,8 @@ player = 0
 WINNER = ""
 SCORE = []
 Round = 0
+NAME_1 = ""
+NAME_2 = ""
 
 
 # ======= Класс для первого окна ======
@@ -183,6 +185,73 @@ class RoundView(arcade.View):
         # проверка нажатия на кнопку сложности
         if self.botton_sprite.collides_with_point((x, y)):
             Round = int(self.input_field.text)
+            self.manager.disable()
+            game_view = NameView()
+            self.window.show_view(game_view)
+
+class NameView(arcade.View):
+    def __init__(self):
+        super().__init__()
+        self.all_sprites = arcade.SpriteList()
+        # Создаем менеджер GUI
+        self.manager = arcade.gui.UIManager()
+        self.manager.enable()
+
+        # Создаем поле ввода
+        self.name_1_field = arcade.gui.UIInputText(
+            x=80, y=SCREEN_HEIGHT // 2 - 45, width=300, height=30, text=""
+        )
+        self.manager.add(self.name_1_field)
+
+        self.name_2_field = arcade.gui.UIInputText(
+            x=SCREEN_WIDTH // 2 + 20, y=SCREEN_HEIGHT // 2 - 45, width=300, height=30, text=""
+        )
+        self.manager.add(self.name_2_field)
+
+        self.botton_sprite = arcade.Sprite("pictures/botton.png", scale=0.5)
+        self.botton_sprite.center_x = SCREEN_WIDTH // 2
+        self.botton_sprite.center_y = SCREEN_HEIGHT // 2 - 190
+        self.all_sprites.append(self.botton_sprite)
+
+        self.round_text = arcade.Text(
+            "ENTER PLAYER NAMES",
+            x=SCREEN_WIDTH // 2,
+            y=SCREEN_HEIGHT // 2 + 90,
+            color=arcade.color.YELLOW_ROSE,
+            font_size=50,
+            font_name="Impact",
+            anchor_x="center",
+            anchor_y="center",
+            bold=False
+        )
+
+        self.Start_text = arcade.Text(
+            "Start",
+            x=SCREEN_WIDTH // 2,
+            y=SCREEN_HEIGHT // 2 - 185,
+            color=arcade.color.YELLOW_ROSE,
+            font_size=40,
+            font_name="Impact",
+            anchor_x="center",
+            anchor_y="center",
+            bold=False
+        )
+
+    def on_draw(self):
+        self.clear()
+        self.manager.draw()
+        self.all_sprites.draw()
+        self.round_text.draw()
+        self.Start_text.draw()
+
+    def on_mouse_press(self, x, y, button, modifiers):
+        global Round
+        global NAME_1
+        global NAME_2
+        # проверка нажатия на кнопку сложности
+        if self.botton_sprite.collides_with_point((x, y)):
+            NAME_1 = self.name_1_field.text
+            NAME_2 = self.name_2_field.text
             self.manager.disable()
             game_view = SecondView()
             self.window.show_view(game_view)
@@ -395,6 +464,8 @@ class GameWindow(arcade.View):
         self.all_sprites = arcade.SpriteList()
 
         global DIFFICULTY_LEVEL
+        global NAME_1
+        global NAME_2
 
         if DIFFICULTY_LEVEL == 1:
             self.texture = arcade.load_texture("pictures/cort.jfif")
@@ -765,14 +836,14 @@ class GameWindow(arcade.View):
             bold=False)
         leave_text.draw()
 
-        player_1_text = arcade.Text("player 1", 100,
+        player_1_text = arcade.Text(f"{NAME_1}", 100,
                                  SCREEN_HEIGHT_GAME - 50,
                                  arcade.color.YELLOW_ROSE,
                                  font_size=40,
                                  font_name="Impact",
                                  anchor_x="center",
                                  bold=False)
-        player_2_text = arcade.Text("player 2", SCREEN_WIDTH_GAME - 100,
+        player_2_text = arcade.Text(f"{NAME_2}", SCREEN_WIDTH_GAME - 100,
                                     SCREEN_HEIGHT_GAME - 50,
                                     arcade.color.YELLOW_ROSE,
                                     font_size=40,

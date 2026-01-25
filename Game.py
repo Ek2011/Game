@@ -905,17 +905,29 @@ class EndView(arcade.View):
         # значальный размер шрифта
         original_font_size = 50
         # обновление текста (для пульсации)
-        pulsating_text = arcade.Text(
-            f"{WINNER} WINS!",
-            x=SCREEN_WIDTH // 2,
-            y=SCREEN_HEIGHT // 2 + 100,
-            color=arcade.color.YELLOW_ROSE,
-            font_size=int(original_font_size * current_scale),
-            font_name="Impact",
-            anchor_x="center",
-            anchor_y="center",
-            bold=False
-        )
+        if WINNER == "player _ 1":
+            pulsating_text = arcade.Text(
+                f"{NAME_1} WINS!",
+                x=SCREEN_WIDTH // 2,
+                y=SCREEN_HEIGHT // 2 + 100,
+                color=arcade.color.YELLOW_ROSE,
+                font_size=int(original_font_size * current_scale),
+                font_name="Impact",
+                anchor_x="center",
+                anchor_y="center",
+                bold=False
+            )
+        else:
+            pulsating_text = arcade.Text(
+                f"{NAME_2} WINS!",
+                x=SCREEN_WIDTH // 2,
+                y=SCREEN_HEIGHT // 2 + 100,
+                color=arcade.color.YELLOW_ROSE,
+                font_size=int(original_font_size * current_scale),
+                font_name="Impact",
+                anchor_x="center",
+                anchor_y="center",
+                bold=False)
         # отрисовка пульсирующего текста
         pulsating_text.draw()
         self.all_sprites.draw()

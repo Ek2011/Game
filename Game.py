@@ -3,6 +3,7 @@ import arcade.gui
 import math
 import random
 import os
+import sqlite3
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
@@ -13,7 +14,7 @@ SECOND_WINDOW_TITLE = "Game"
 DIFFICULTY_LEVEL = 0
 player = 0
 WINNER = ""
-SCORE = []
+SCORE = [0, 0]
 Round = 0
 NAME_1 = ""
 NAME_2 = ""
@@ -70,32 +71,6 @@ class WelcomeView(arcade.View):
         self.tennball.center_y = SCREEN_HEIGHT - 120
         self.all_sprites.append(self.tennball)
 
-        global SCORE
-        if os.path.exists("score.txt"):
-            with open("score.txt", "r", encoding="utf-8-sig") as f:
-                k = f.readlines()
-                for score in k:
-                    SCORE.append(int(score.rstrip()))
-        else:
-            with open("score.txt", "w", encoding="utf-8-sig") as f:
-                f.write("0\n")
-                f.write("0")
-            with open("score.txt", "r", encoding="utf-8-sig") as f:
-                k = f.readlines()
-                for score in k:
-                    SCORE.append(int(score.rstrip()))
-
-        self.score = arcade.Text(
-            f"{SCORE[0]} : {SCORE[1]}",
-            x=SCREEN_WIDTH // 2,
-            y=SCREEN_HEIGHT // 2 + 150,
-            color=arcade.color.YELLOW_ROSE,
-            font_size=85,
-            font_name="Impact",
-            anchor_x="center",
-            anchor_y="center",
-            bold=False
-        )
 
     def on_update(self, delta_time):
         # обновление времени
@@ -120,7 +95,6 @@ class WelcomeView(arcade.View):
         # отрисовка текста
         self.text_object.value = "PONG"
         self.text_object.draw()
-        self.score.draw()
 
     def on_mouse_press(self, x, y, button, modifiers):
         # проверка нажатия на стартовую кнопку
@@ -267,6 +241,150 @@ class SecondView(arcade.View):
         self.time_elapsed = 0
         self.pulse_speed = 7
         self.pulse_min_scale = 0.9
+        self.pulse_max_scale = 1.5
+
+        # текстовые обьекты
+
+        self.back_text = arcade.Text(
+            "",
+            x=100,
+            y=SCREEN_HEIGHT // 2 - 200,
+            color=arcade.color.YELLOW_ROSE,
+            font_size=30,
+            font_name="Impact",
+            anchor_x="center",
+            anchor_y="center",
+            bold=False
+        )
+
+        # создание списка спрайтов
+        self.all_sprites = arcade.SpriteList()
+
+        # создание кнопок-спрайтов
+
+        self.botton_back = arcade.Sprite("pictures/botton.png", scale=0.5)
+        self.botton_back.center_x = 100
+        self.botton_back.center_y = SCREEN_HEIGHT // 2 - 202.5
+        self.all_sprites.append(self.botton_back)
+
+        self.botton_start = arcade.Sprite("pictures/startbutton.png", scale=0.25)
+        self.botton_start.center_x = SCREEN_WIDTH // 2
+        self.botton_start.center_y = SCREEN_HEIGHT // 2 - 202.5
+        self.all_sprites.append(self.botton_start)
+
+        self.setup_sprite = arcade.Sprite("pictures/setup.png", scale=0.10)
+        self.setup_sprite.center_x = 40
+        self.setup_sprite.center_y = SCREEN_HEIGHT - 40
+        self.all_sprites.append(self.setup_sprite)
+
+        global SCORE
+        global NAME_1
+        global NAME_2
+        if os.path.exists("score.txt"):
+            with open("score.txt", "r", encoding="utf-8-sig") as f:
+                k = f.readlines()
+                for score in k:
+                    SCORE.append(int(score.rstrip()))
+        else:
+            with open("score.txt", "w", encoding="utf-8-sig") as f:
+                f.write("0\n")
+                f.write("0")
+            with open("score.txt", "r", encoding="utf-8-sig") as f:
+                k = f.readlines()
+                for score in k:
+                    SCORE.append(int(score.rstrip()))
+
+        self.score = arcade.Text(
+            f"{NAME_1}-{SCORE[0]}  :  {SCORE[1]}-{NAME_2}",
+            x=SCREEN_WIDTH // 2,
+            y=SCREEN_HEIGHT // 2,
+            color=arcade.color.YELLOW_ROSE,
+            font_size=85,
+            font_name="Impact",
+            anchor_x="center",
+            anchor_y="center",
+            bold=False
+        )
+
+    def on_update(self, delta_time):
+        # обновление времени
+        self.time_elapsed += delta_time
+
+    def on_draw(self):
+        self.clear()
+
+        # значения текстовых обьектов
+        self.back_text.value = "BACK"
+
+        # формула для пульсации текста
+        pulse_factor = (math.sin(self.time_elapsed * self.pulse_speed) + 1) / 2  # от 0 до 1
+        current_scale = self.pulse_min_scale + (self.pulse_max_scale - self.pulse_min_scale) * pulse_factor
+
+        # значальный размер шрифта
+        original_font_size = 100
+
+        # обновление текста (для пульсации)
+        pulsating_text = arcade.Text(
+            "Счёт",
+            x=SCREEN_WIDTH // 2,
+            y=SCREEN_HEIGHT // 2 + 175,
+            color=arcade.color.YELLOW_ROSE,
+            font_size=int(original_font_size * current_scale),
+            font_name="Impact",
+            anchor_x="center",
+            anchor_y="center",
+            bold=False
+        )
+
+        # отрисовка пульсирующего текста
+        pulsating_text.draw()
+
+        self.all_sprites.draw()
+
+        # отрисовка текста кнопок
+        self.back_text.draw()
+        self.score.draw()
+
+    def on_mouse_press(self, x, y, button, modifiers):
+        global DIFFICULTY_LEVEL
+        global NAME_1
+        global NAME_2
+        global SCORE
+        # проверка нажатия на кнопку сложности
+        if self.botton_back.collides_with_point((x, y)):
+            con = sqlite3.connect("SCORE_end")
+            cur = con.cursor()
+            cur.execute(
+                'INSERT INTO Score ("1Player", "1Player_score", "2Player", "2Player_score") VALUES (?, ?, ?, ?)',
+                (NAME_1, SCORE[0], NAME_2, SCORE[1]))
+            con.commit()
+            with open("score.txt", "w", encoding="utf-8-sig") as f:
+                f.write("0\n")
+                f.write("0")
+            with open("score.txt", "r", encoding="utf-8-sig") as f:
+                k = f.readlines()
+                SCORE.clear()
+                for score in k:
+                    SCORE.append(int(score.rstrip()))
+            game_view = WelcomeView()
+            self.window.show_view(game_view)
+        elif self.botton_start.collides_with_point((x, y)):
+            game_view = ThirdView()
+            self.window.show_view(game_view)
+
+    def on_show_view(self):
+        self.window.set_size(SCREEN_WIDTH, SCREEN_HEIGHT)
+
+
+class ThirdView(arcade.View):
+    def __init__(self):
+        super().__init__()
+        arcade.set_background_color(arcade.color.DARK_BLUE_GRAY)
+
+        # параметры пульсации текста
+        self.time_elapsed = 0
+        self.pulse_speed = 7
+        self.pulse_min_scale = 0.9
         self.pulse_max_scale = 1.1
 
         # текстовые обьекты
@@ -359,11 +477,6 @@ class SecondView(arcade.View):
         self.botton_sprite_3.center_y = SCREEN_HEIGHT // 2 - 202.5 + 100
         self.all_sprites.append(self.botton_sprite_3)
 
-        self.botton_sprite_4 = arcade.Sprite("pictures/botton.png", scale=0.5)
-        self.botton_sprite_4.center_x = 100
-        self.botton_sprite_4.center_y = SCREEN_HEIGHT // 2 - 202.5
-        self.all_sprites.append(self.botton_sprite_4)
-
         self.botton_sprite_5 = arcade.Sprite("pictures/botton.png", scale=0.5)
         self.botton_sprite_5.center_x = SCREEN_WIDTH // 2
         self.botton_sprite_5.center_y = SCREEN_HEIGHT // 2 - 202.5
@@ -386,7 +499,6 @@ class SecondView(arcade.View):
         self.easy_text.value = "EASY"
         self.medium_text.value = "MEDIUM"
         self.hard_text.value = "HARD"
-        self.back_text.value = "BACK"
         self.insane_text.value = "INSANE"
 
         # формула для пульсации текста
@@ -435,9 +547,6 @@ class SecondView(arcade.View):
         elif self.botton_sprite_3.collides_with_point((x, y)):
             DIFFICULTY_LEVEL = 3
             game_view = GameWindow()
-            self.window.show_view(game_view)
-        elif self.botton_sprite_4.collides_with_point((x, y)):
-            game_view = WelcomeView()
             self.window.show_view(game_view)
         elif self.botton_sprite_5.collides_with_point((x, y)):
             DIFFICULTY_LEVEL = 4
@@ -625,7 +734,7 @@ class GameWindow(arcade.View):
 
     def on_mouse_press(self, x, y, button, modifiers):
         if self.leave_button_sprite.collides_with_point((x, y)):
-            game_view = SecondView()
+            game_view = ThirdView()
             self.window.show_view(game_view)
 
     def on_update(self, delta_time):

@@ -969,6 +969,8 @@ class EndView(arcade.View):
         super().__init__()
         arcade.set_background_color(arcade.color.DARK_BLUE_GRAY)
         self.player = GameWindow.player
+
+        self.win_sound = arcade.load_sound("pictures/soundofwictory.mp3")
         # параметры пульсации текста
         self.time_elapsed = 0
         self.pulse_speed = 7
@@ -997,8 +999,16 @@ class EndView(arcade.View):
             p = Confetti(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
             self.confetti_list.append(p)
 
+        self.sound_played = False
+
     def on_show_view(self):
         self.window.set_size(SCREEN_WIDTH, SCREEN_HEIGHT)
+        if not self.sound_played:
+            arcade.play_sound(self.win_sound)
+            self.sound_played = True
+
+    def on_hide_view(self):
+        self.sound_played = False
 
     def on_update(self, delta_time):
         # обновление времени

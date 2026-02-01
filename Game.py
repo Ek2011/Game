@@ -596,12 +596,12 @@ class GameWindow(arcade.View):
         self.hero_2_x = SCREEN_WIDTH_GAME - 40
         self.hero_2_y = SCREEN_HEIGHT_GAME // 2
 
-        self.stick_width = 10
-        self.stick_height = 100
+        self.stick_width = 0.001
+        self.stick_height = 80
 
-        self.stick_1_x = self.hero_1_x + 50
+        self.stick_1_x = self.hero_1_x + 30
         self.stick_1_y = self.hero_1_y
-        self.stick_2_x = self.hero_2_x - 50
+        self.stick_2_x = self.hero_2_x - 30
         self.stick_2_y = self.hero_2_y
 
         self.stick_1_sprite = arcade.SpriteSolidColor(self.stick_width, self.stick_height, arcade.color.WHITE)
@@ -734,8 +734,8 @@ class GameWindow(arcade.View):
         self.ball.center_y = SCREEN_HEIGHT_GAME // 2
         self.all_sprites.append(self.ball)
         self.wall_player_list = arcade.SpriteList()
-        self.wall_player_list.append(self.player_sprite_1)
-        self.wall_player_list.append(self.player_sprite_2)
+        self.wall_player_list.append(self.stick_1_sprite)
+        self.wall_player_list.append(self.stick_2_sprite)
 
         self.leave_button_sprite = arcade.Sprite("pictures/botton.png", scale=0.5)
         self.leave_button_sprite.center_x = SCREEN_WIDTH_GAME // 2
@@ -780,6 +780,10 @@ class GameWindow(arcade.View):
         # Сохраняем старые позиции
         old_x1, old_y1 = self.hero_1_x, self.hero_1_y
         old_x2, old_y2 = self.hero_2_x, self.hero_2_y
+        old_stick_x1 = self.stick_1_sprite.center_x
+        old_stick_y1 = self.stick_1_sprite.center_y
+        old_stick_x2 = self.stick_2_sprite.center_x
+        old_stick_y2 = self.stick_2_sprite.center_y
 
         # Пробуем переместить игроков
         self.hero_1_y += dy1
@@ -797,8 +801,13 @@ class GameWindow(arcade.View):
         # Проверяем столкновения игрока 1 со стенами
         wall_collision_1 = False
         for wall in self.wall_list:
-            if arcade.check_for_collision(self.player_sprite_1, wall) and arcade.check_for_collision(self.player_sprite_1, wall):
+            if arcade.check_for_collision(self.player_sprite_1, wall):
                 wall_collision_1 = True
+                break
+        wall_stick_collision_1 = False
+        for wall in self.wall_list:
+            if arcade.check_for_collision(self.stick_1_sprite, wall):
+                wall_stick_collision_1 = True
                 break
 
         # Проверяем столкновения игрока 2 со стенами
@@ -806,6 +815,11 @@ class GameWindow(arcade.View):
         for wall in self.wall_list:
             if arcade.check_for_collision(self.player_sprite_2, wall):
                 wall_collision_2 = True
+                break
+        wall_stick_collision_2 = False
+        for wall in self.wall_list:
+            if arcade.check_for_collision(self.stick_2_sprite, wall):
+                wall_stick_collision_2 = True
                 break
 
         wall_collision_ball = False
@@ -827,10 +841,16 @@ class GameWindow(arcade.View):
             self.player_sprite_1.center_x = self.hero_1_x
             self.player_sprite_1.center_y = self.hero_1_y
 
+        if wall_stick_collision_1:
+            self.stick_1_sprite.center_y, self.stick_1_sprite.center_x = old_stick_y1, old_stick_x1
+
         if wall_collision_2:
             self.hero_2_x, self.hero_2_y = old_x2, old_y2
             self.player_sprite_2.center_x = self.hero_2_x
             self.player_sprite_2.center_y = self.hero_2_y
+
+        if wall_stick_collision_2:
+            self.stick_2_sprite.center_y, self.stick_2_sprite.center_x = old_stick_y2, old_stick_x2
 
         if wall_collision_ball:
             if place_location == "player":

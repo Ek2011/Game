@@ -604,6 +604,17 @@ class GameWindow(arcade.View):
         self.stick_2_x = self.hero_2_x - 50
         self.stick_2_y = self.hero_2_y
 
+        self.stick_1_sprite = arcade.SpriteSolidColor(self.stick_width, self.stick_height, arcade.color.WHITE)
+        self.stick_1_sprite.center_x = self.stick_1_x
+        self.stick_1_sprite.center_y = self.stick_1_y
+
+        self.stick_2_sprite = arcade.SpriteSolidColor(self.stick_width, self.stick_height, arcade.color.WHITE)
+        self.stick_2_sprite.center_x = self.stick_2_x
+        self.stick_2_sprite.center_y = self.stick_2_y
+
+        self.all_sprites.append(self.stick_1_sprite)
+        self.all_sprites.append(self.stick_2_sprite)
+
         self.keys_pressed = set()
         self.player_1_textures = []
         self.player_2_textures = []
@@ -749,27 +760,21 @@ class GameWindow(arcade.View):
     def on_update(self, delta_time):
         dx1, dy1 = 0, 0
         dx2, dy2 = 0, 0
-        sx1, sy1 = 0, 0
-        sy2, sx2 = 0, 0
         moving1 = False
         moving2 = False
 
         # Определяем направление движения
         if arcade.key.W in self.keys_pressed:
             dy1 = self.player1_speed * delta_time
-            sy1 = self.player1_speed * delta_time
             moving1 = True
         if arcade.key.S in self.keys_pressed:
             dy1 = -self.player1_speed * delta_time
-            sy1 = -self.player1_speed * delta_time
             moving1 = True
         if arcade.key.UP in self.keys_pressed:
             dy2 = self.player_speed * delta_time
-            sy2 = self.player_speed * delta_time
             moving2 = True
         if arcade.key.DOWN in self.keys_pressed:
             dy2 = -self.player_speed * delta_time
-            sy2 = -self.player_speed * delta_time
             moving2 = True
 
         # Сохраняем старые позиции
@@ -780,8 +785,8 @@ class GameWindow(arcade.View):
         self.hero_1_y += dy1
         self.hero_2_y += dy2
 
-        self.stick_1_y += sy1
-        self.stick_2_y += sy2
+        self.stick_1_sprite.center_y += dy1
+        self.stick_2_sprite.center_y += dy2
 
         # Обновляем позиции спрайтов
         self.player_sprite_1.center_x = self.hero_1_x
@@ -792,7 +797,7 @@ class GameWindow(arcade.View):
         # Проверяем столкновения игрока 1 со стенами
         wall_collision_1 = False
         for wall in self.wall_list:
-            if arcade.check_for_collision(self.player_sprite_1, wall):
+            if arcade.check_for_collision(self.player_sprite_1, wall) and arcade.check_for_collision(self.player_sprite_1, wall):
                 wall_collision_1 = True
                 break
 
@@ -946,12 +951,6 @@ class GameWindow(arcade.View):
         # Сначала стены
         self.wall_list.draw()
         self.all_sprites.draw() # Потом игроки
-
-        arcade.draw.draw_rect_filled(arcade.rect.XYWH(self.stick_1_x, self.stick_1_y,
-                                                      self.stick_width, self.stick_height),arcade.color.WHITE)
-
-        arcade.draw.draw_rect_filled(arcade.rect.XYWH(self.stick_2_x, self.stick_2_y,
-                                                      self.stick_width, self.stick_height), arcade.color.WHITE)
 
         score_text = arcade.Text(f"{self.count_1} : {self.count_2}", SCREEN_WIDTH_GAME // 2,
             SCREEN_HEIGHT_GAME - 60,

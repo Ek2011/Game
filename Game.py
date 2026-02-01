@@ -576,6 +576,7 @@ class GameWindow(arcade.View):
         global NAME_1
         global NAME_2
 
+
         if DIFFICULTY_LEVEL == 1:
             self.texture = arcade.load_texture("pictures/cort.jfif")
         if DIFFICULTY_LEVEL == 2:
@@ -594,6 +595,14 @@ class GameWindow(arcade.View):
 
         self.hero_2_x = SCREEN_WIDTH_GAME - 40
         self.hero_2_y = SCREEN_HEIGHT_GAME // 2
+
+        self.stick_width = 10
+        self.stick_height = 100
+
+        self.stick_1_x = self.hero_1_x + 50
+        self.stick_1_y = self.hero_1_y
+        self.stick_2_x = self.hero_2_x - 50
+        self.stick_2_y = self.hero_2_y
 
         self.keys_pressed = set()
         self.player_1_textures = []
@@ -740,21 +749,27 @@ class GameWindow(arcade.View):
     def on_update(self, delta_time):
         dx1, dy1 = 0, 0
         dx2, dy2 = 0, 0
+        sx1, sy1 = 0, 0
+        sy2, sx2 = 0, 0
         moving1 = False
         moving2 = False
 
         # Определяем направление движения
         if arcade.key.W in self.keys_pressed:
             dy1 = self.player1_speed * delta_time
+            sy1 = self.player1_speed * delta_time
             moving1 = True
         if arcade.key.S in self.keys_pressed:
             dy1 = -self.player1_speed * delta_time
+            sy1 = -self.player1_speed * delta_time
             moving1 = True
         if arcade.key.UP in self.keys_pressed:
             dy2 = self.player_speed * delta_time
+            sy2 = self.player_speed * delta_time
             moving2 = True
         if arcade.key.DOWN in self.keys_pressed:
             dy2 = -self.player_speed * delta_time
+            sy2 = -self.player_speed * delta_time
             moving2 = True
 
         # Сохраняем старые позиции
@@ -764,6 +779,9 @@ class GameWindow(arcade.View):
         # Пробуем переместить игроков
         self.hero_1_y += dy1
         self.hero_2_y += dy2
+
+        self.stick_1_y += sy1
+        self.stick_2_y += sy2
 
         # Обновляем позиции спрайтов
         self.player_sprite_1.center_x = self.hero_1_x
@@ -927,7 +945,14 @@ class GameWindow(arcade.View):
         arcade.draw_texture_rect(self.texture, arcade.rect.XYWH(SCREEN_WIDTH_GAME // 2, SCREEN_HEIGHT_GAME // 2, SCREEN_WIDTH_GAME, SCREEN_HEIGHT_GAME))
         # Сначала стены
         self.wall_list.draw()
-        self.all_sprites.draw()  # Потом игроки
+        self.all_sprites.draw() # Потом игроки
+
+        arcade.draw.draw_rect_filled(arcade.rect.XYWH(self.stick_1_x, self.stick_1_y,
+                                                      self.stick_width, self.stick_height),arcade.color.WHITE)
+
+        arcade.draw.draw_rect_filled(arcade.rect.XYWH(self.stick_2_x, self.stick_2_y,
+                                                      self.stick_width, self.stick_height), arcade.color.WHITE)
+
         score_text = arcade.Text(f"{self.count_1} : {self.count_2}", SCREEN_WIDTH_GAME // 2,
             SCREEN_HEIGHT_GAME - 60,
             arcade.color.YELLOW_ROSE,
@@ -962,6 +987,7 @@ class GameWindow(arcade.View):
         score_text.draw()
         player_1_text.draw()
         player_2_text.draw()
+
 
 
 class EndView(arcade.View):

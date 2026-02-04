@@ -14,7 +14,7 @@ SECOND_WINDOW_TITLE = "Game"
 DIFFICULTY_LEVEL = 0
 player = 0
 WINNER = ""
-SCORE = [0, 0]
+SCORE = []
 Round = 0
 NAME_1 = ""
 NAME_2 = ""
@@ -352,7 +352,8 @@ class SecondView(arcade.View):
         global SCORE
         # проверка нажатия на кнопку сложности
         if self.botton_back.collides_with_point((x, y)):
-            if SCORE != [0, 0] or SCORE != []:
+            if SCORE != [0, 0] and SCORE != [] and SCORE != ['0', '0'] and len(SCORE) == 2:
+                print(SCORE)
                 con = sqlite3.connect("SCORE_end")
                 cur = con.cursor()
                 cur.execute(

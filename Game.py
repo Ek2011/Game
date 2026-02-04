@@ -352,7 +352,7 @@ class SecondView(arcade.View):
         global SCORE
         # проверка нажатия на кнопку сложности
         if self.botton_back.collides_with_point((x, y)):
-            if SCORE != [0, 0]:
+            if SCORE != [0, 0] or SCORE != []:
                 con = sqlite3.connect("SCORE_end")
                 cur = con.cursor()
                 cur.execute(
@@ -367,6 +367,7 @@ class SecondView(arcade.View):
                     SCORE.clear()
                     for score in k:
                         SCORE.append(int(score.rstrip()))
+                print(SCORE)
             game_view = WelcomeView()
             self.window.show_view(game_view)
         elif self.botton_start.collides_with_point((x, y)):
@@ -1073,7 +1074,7 @@ class EndView(arcade.View):
         # значальный размер шрифта
         original_font_size = 50
         # обновление текста (для пульсации)
-        if WINNER == "player _ 1":
+        if WINNER == "player 1":
             pulsating_text = arcade.Text(
                 f"{NAME_1} WINS!",
                 x=SCREEN_WIDTH // 2,

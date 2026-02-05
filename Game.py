@@ -30,7 +30,7 @@ class WelcomeView(arcade.View):
         self.text_object = arcade.Text(
             "",
             x=SCREEN_WIDTH // 2,
-            y=SCREEN_HEIGHT // 2 + 15,
+            y=SCREEN_HEIGHT // 2 + 155,
             color=arcade.color.YELLOW_ROSE,
             font_size=100,
             font_name="Impact",
@@ -38,6 +38,20 @@ class WelcomeView(arcade.View):
             anchor_y="center",
             bold=False
         )
+
+        self.text_score = arcade.Text(
+            "Score",
+            x=SCREEN_WIDTH // 2,
+            y=SCREEN_HEIGHT // 2,
+            color=arcade.color.WHITE,
+            font_size=50,
+            font_name="Impact",
+            anchor_x="center",
+            anchor_y="center",
+            bold=False
+        )
+        self.time_elapsed = 0
+
         self.time_elapsed = 0
 
         # параметры пульсации стартовой кнопки
@@ -71,6 +85,11 @@ class WelcomeView(arcade.View):
         self.tennball.center_y = SCREEN_HEIGHT - 120
         self.all_sprites.append(self.tennball)
 
+        self.sprite_score = arcade.Sprite("pictures/botton.png", scale=0.8)
+        self.sprite_score.center_x = SCREEN_WIDTH // 2
+        self.sprite_score.center_y = SCREEN_HEIGHT // 2
+        self.all_sprites.append(self.sprite_score)
+
 
     def on_update(self, delta_time):
         # обновление времени
@@ -95,6 +114,7 @@ class WelcomeView(arcade.View):
         # отрисовка текста
         self.text_object.value = "PONG"
         self.text_object.draw()
+        self.text_score.draw()
 
     def on_mouse_press(self, x, y, button, modifiers):
         # проверка нажатия на стартовую кнопку
@@ -102,6 +122,85 @@ class WelcomeView(arcade.View):
             # открытие второго окна
             game_view = RoundView()
             self.window.show_view(game_view)
+        elif self.sprite_score.collides_with_point((x, y)):
+            game_view = ScoreView()
+            self.window.show_view(game_view)
+
+
+class ScoreView(arcade.View):
+    def __init__(self):
+        super().__init__()
+        self.all_sprites = arcade.SpriteList()
+
+        self.botton_sprite_menu = arcade.Sprite("pictures/menu.png", scale=0.5)
+        self.botton_sprite_menu.center_x = SCREEN_WIDTH // 2
+        self.botton_sprite_menu.center_y = SCREEN_HEIGHT // 2 - 240
+        self.all_sprites.append(self.botton_sprite_menu)
+
+        self.round_text = arcade.Text(
+            "Последние 5 игр",
+            x=SCREEN_WIDTH // 2,
+            y=SCREEN_HEIGHT // 2 + 240,
+            color=arcade.color.YELLOW_ROSE,
+            font_size=50,
+            font_name="Impact",
+            anchor_x="center",
+            anchor_y="center",
+            bold=False
+        )
+
+        con = sqlite3.connect("SCORE_end")
+        cur = con.cursor()
+        res = cur.execute("""
+        SELECT ID FROM Score
+        """).fetchall()
+        numb = len(res)
+        self.sprite_text = []
+        y = [160, 80, 0, -80, -160]
+        if len(res) >= 5:
+            for k in range(0, 5):
+                res = cur.execute(f"""SELECT "1Player", "1Player_score", "2Player", "2Player_score" FROM Score WHERE ID = {numb - k}""").fetchone()
+                round_text = arcade.Text(
+                    f"{res[0]}    {res[1]} : {res[3]}    {res[2]}",
+                    x=SCREEN_WIDTH // 2,
+                    y=SCREEN_HEIGHT // 2 + y[k],
+                    color=arcade.color.YELLOW_ROSE,
+                    font_size=30,
+                    font_name="Impact",
+                    anchor_x="center",
+                    anchor_y="center",
+                    bold=False
+                )
+                self.sprite_text.append(round_text)
+        else:
+            for k in range(0, len(res)):
+                res = cur.execute(f"""SELECT "1Player", "1Player_score", "2Player", "2Player_score" FROM Score WHERE ID = {numb - k}""").fetchone()
+                round_text = arcade.Text(
+                    f"{res[0]}    {res[1]} : {res[3]}    {res[2]}",
+                    x=SCREEN_WIDTH // 2,
+                    y=SCREEN_HEIGHT // 2 + y[k],
+                    color=arcade.color.YELLOW_ROSE,
+                    font_size=30,
+                    font_name="Impact",
+                    anchor_x="center",
+                    anchor_y="center",
+                    bold=False
+                )
+                self.sprite_text.append(round_text)
+
+
+    def on_draw(self):
+        self.clear()
+        self.all_sprites.draw()
+        self.round_text.draw()
+        for k in self.sprite_text:
+            k.draw()
+
+    def on_mouse_press(self, x, y, button, modifiers):
+        if self.botton_sprite_menu.collides_with_point((x, y)):
+            game_view = WelcomeView()
+            self.window.show_view(game_view)
+
 
 # ====== Класс дл экрана выбора раундов =====
 class RoundView(arcade.View):
@@ -283,6 +382,7 @@ class SecondView(arcade.View):
         if os.path.exists("score.txt"):
             with open("score.txt", "r", encoding="utf-8-sig") as f:
                 k = f.readlines()
+                SCORE.clear()
                 for score in k:
                     SCORE.append(int(score.rstrip()))
         else:
@@ -291,6 +391,7 @@ class SecondView(arcade.View):
                 f.write("0")
             with open("score.txt", "r", encoding="utf-8-sig") as f:
                 k = f.readlines()
+                SCORE.clear()
                 for score in k:
                     SCORE.append(int(score.rstrip()))
 
@@ -1301,6 +1402,7 @@ class Confetti(arcade.Sprite):
         # Удаление
         if self.lifetime <= 0:
             self.remove_from_sprite_lists()
+
 
 
 def main():

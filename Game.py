@@ -803,7 +803,7 @@ class GameWindow(arcade.View):
         self.hero_2_y = SCREEN_HEIGHT_GAME // 2
 
         self.stick_width = 0.001
-        self.stick_height = 80
+        self.stick_height = 100
 
         self.stick_1_x = self.hero_1_x + 10
         self.stick_1_y = self.hero_1_y

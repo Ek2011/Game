@@ -281,9 +281,13 @@ class RoundView(arcade.View):
             self.error_text.draw()
 
 
+
+
 class NameView(arcade.View):
     def __init__(self):
         super().__init__()
+        self.flag = False
+
         self.all_sprites = arcade.SpriteList()
         # Создаем менеджер GUI
         self.manager = arcade.gui.UIManager()
@@ -329,24 +333,42 @@ class NameView(arcade.View):
             bold=False
         )
 
+
     def on_draw(self):
         self.clear()
         self.manager.draw()
         self.all_sprites.draw()
         self.round_text.draw()
         self.Start_text.draw()
+        if self.flag is True:
+            self.error_text.draw()
 
     def on_mouse_press(self, x, y, button, modifiers):
         global Round
         global NAME_1
         global NAME_2
         # проверка нажатия на кнопку сложности
-        if self.botton_sprite.collides_with_point((x, y)):
-            NAME_1 = self.name_1_field.text
-            NAME_2 = self.name_2_field.text
-            self.manager.disable()
-            game_view = SecondView()
-            self.window.show_view(game_view)
+        if len(self.name_1_field.text) + len(self.name_2_field.text) < 9:
+            if self.botton_sprite.collides_with_point((x, y)):
+                NAME_1 = self.name_1_field.text
+                NAME_2 = self.name_2_field.text
+                game_view = SecondView()
+                self.window.show_view(game_view)
+                self.manager.disable()
+            self.flag = False
+        else:
+            self.error_text = arcade.Text(
+                "Names are too big!",
+                x=SCREEN_WIDTH // 2,
+                y=SCREEN_HEIGHT // 2 - 85,
+                color=arcade.color.RED,
+                font_size=15,
+                font_name="Impact",
+                anchor_x="center",
+                anchor_y="center",
+                bold=False
+            )
+            self.flag = True
 
 
 # ====== Класс для 2 окна =======
@@ -481,7 +503,6 @@ class SecondView(arcade.View):
         # проверка нажатия на кнопку сложности
         if self.botton_back.collides_with_point((x, y)):
             if SCORE != [0, 0] and SCORE != [] and SCORE != ['0', '0'] and len(SCORE) == 2:
-                print(SCORE)
                 con = sqlite3.connect("SCORE_end")
                 cur = con.cursor()
                 cur.execute(
@@ -496,7 +517,6 @@ class SecondView(arcade.View):
                     SCORE.clear()
                     for score in k:
                         SCORE.append(int(score.rstrip()))
-                print(SCORE)
             game_view = WelcomeView()
             self.window.show_view(game_view)
             if self.s_player:
@@ -520,11 +540,11 @@ class SecondView(arcade.View):
     def on_show_view(self):
         self.window.set_size(SCREEN_WIDTH, SCREEN_HEIGHT)
         if not self.sound_played:
-            self.s_player = arcade.play_sound(self.music)
+            self.s_player = arcade.play_sound(self.music, loop=True)
             self.sound_played = True
 
     def on_hide_view(self):
-        self.sound_played = False
+            self.sound_played = False
 
 
 class InstructionView(arcade.View):
@@ -1429,6 +1449,8 @@ class SetupView_2(arcade.View):
 class SetupView_3(arcade.View):
     def __init__(self):
         super().__init__()
+        self.exep = None
+
         self.all_sprites = arcade.SpriteList()
         # Создаем менеджер GUI
         self.manager = arcade.gui.UIManager()
@@ -1480,18 +1502,35 @@ class SetupView_3(arcade.View):
         self.all_sprites.draw()
         self.round_text.draw()
         self.Start_text.draw()
+        if self.exep is True:
+            self.error_text.draw()
 
     def on_mouse_press(self, x, y, button, modifiers):
         global Round
         # проверка нажатия на кнопку сложности
         if self.botton_sprite.collides_with_point((x, y)):
-            Round = int(self.input_field.text)
-            self.manager.disable()
-            game_view = ThirdView()
-            self.window.show_view(game_view)
+            try:
+                Round = int(self.input_field.text)
+                game_view = NameView()
+                self.window.show_view(game_view)
+                self.exep = False
+            except ValueError:
+                self.error_text = arcade.Text(
+                    "enter the number!",
+                    x=SCREEN_WIDTH // 2,
+                    y=SCREEN_HEIGHT // 2 - 85,
+                    color=arcade.color.RED,
+                    font_size=15,
+                    font_name="Impact",
+                    anchor_x="center",
+                    anchor_y="center",
+                    bold=False
+                )
+                self.exep = True
         elif self.botton_sprite_menu.collides_with_point((x, y)):
             game_view = SecondView()
             self.window.show_view(game_view)
+        self.manager.disable()
 
 
 class Confetti(arcade.Sprite):

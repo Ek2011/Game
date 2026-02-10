@@ -210,6 +210,7 @@ class RoundView(arcade.View):
         # Создаем менеджер GUI
         self.manager = arcade.gui.UIManager()
         self.manager.enable()
+        self.exep = None
 
         # Создаем поле ввода
         self.input_field = arcade.gui.UIInputText(
@@ -246,21 +247,38 @@ class RoundView(arcade.View):
             bold=False
         )
 
+    def on_mouse_press(self, x, y, button, modifiers):
+        global Round
+        # проверка нажатия на кнопку сложности
+        if self.botton_sprite.collides_with_point((x, y)):
+            try:
+                Round = int(self.input_field.text)
+                self.manager.disable()
+                game_view = NameView()
+                self.window.show_view(game_view)
+                self.exep = False
+            except ValueError:
+                self.error_text = arcade.Text(
+                    "enter the number!",
+                    x=SCREEN_WIDTH // 2,
+                    y=SCREEN_HEIGHT // 2 - 85,
+                    color=arcade.color.RED,
+                    font_size=15,
+                    font_name="Impact",
+                    anchor_x="center",
+                    anchor_y="center",
+                    bold=False
+                )
+                self.exep = True
+
     def on_draw(self):
         self.clear()
         self.manager.draw()
         self.all_sprites.draw()
         self.round_text.draw()
         self.Start_text.draw()
-
-    def on_mouse_press(self, x, y, button, modifiers):
-        global Round
-        # проверка нажатия на кнопку сложности
-        if self.botton_sprite.collides_with_point((x, y)):
-            Round = int(self.input_field.text)
-            self.manager.disable()
-            game_view = NameView()
-            self.window.show_view(game_view)
+        if self.exep is True:
+            self.error_text.draw()
 
 
 class NameView(arcade.View):

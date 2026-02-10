@@ -336,6 +336,9 @@ class SecondView(arcade.View):
     def __init__(self):
         super().__init__()
         arcade.set_background_color(arcade.color.DARK_BLUE_GRAY)
+        self.music = arcade.load_sound("sounds/1min-2021-10-19_-_Funny_Bit_-_www.FesliyanStudios.com.mp3")
+        self.sound_played = False
+        self.s_player = None
 
         # параметры пульсации текста
         self.time_elapsed = 0
@@ -478,18 +481,32 @@ class SecondView(arcade.View):
                 print(SCORE)
             game_view = WelcomeView()
             self.window.show_view(game_view)
+            if self.s_player:
+                arcade.stop_sound(self.s_player)
         elif self.botton_start.collides_with_point((x, y)):
             game_view = ThirdView()
             self.window.show_view(game_view)
+            if self.s_player:
+                arcade.stop_sound(self.s_player)
         elif self.setup_sprite.collides_with_point((x, y)):
             game_view = SetupView_2()
             self.window.show_view(game_view)
+            if self.s_player:
+                arcade.stop_sound(self.s_player)
         elif self.instruction_button_sprite.collides_with_point((x, y)):
             game_view = InstructionView()
             self.window.show_view(game_view)
+            if self.s_player:
+                arcade.stop_sound(self.s_player)
 
     def on_show_view(self):
         self.window.set_size(SCREEN_WIDTH, SCREEN_HEIGHT)
+        if not self.sound_played:
+            self.s_player = arcade.play_sound(self.music)
+            self.sound_played = True
+
+    def on_hide_view(self):
+        self.sound_played = False
 
 
 class InstructionView(arcade.View):
@@ -1218,7 +1235,7 @@ class EndView(arcade.View):
         arcade.set_background_color(arcade.color.DARK_BLUE_GRAY)
         self.player = GameWindow.player
 
-        self.win_sound = arcade.load_sound("pictures/soundofwictory.mp3")
+        self.win_sound = arcade.load_sound("sounds/soundofwictory.mp3")
         # параметры пульсации текста
         self.time_elapsed = 0
         self.pulse_speed = 7

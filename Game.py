@@ -839,14 +839,20 @@ class GameWindow(arcade.View):
         global NAME_1
         global NAME_2
 
+        self.music_player = None
+
         if DIFFICULTY_LEVEL == 1:
             self.texture = arcade.load_texture("pictures/cort.jfif")
+            self.music = arcade.load_sound("sounds/easysound.mp3")
         if DIFFICULTY_LEVEL == 2:
             self.texture = arcade.load_texture("pictures/city.jpg")
+            self.music = arcade.load_sound("sounds/mediumsound.mp3")
         if DIFFICULTY_LEVEL == 3:
             self.texture = arcade.load_texture("pictures/apocal.jpg")
+            self.music = arcade.load_sound("sounds/hardsound.mp3")
         if DIFFICULTY_LEVEL == 4:
             self.texture = arcade.load_texture("pictures/newspace.png")
+            self.music = arcade.load_sound("sounds/insanesound.mp3")
 
         self.player1_speed = 450
         self.player_speed = 450
@@ -1005,6 +1011,11 @@ class GameWindow(arcade.View):
 
     def on_show_view(self):
         self.window.set_size(SCREEN_WIDTH_GAME, SCREEN_HEIGHT_GAME)
+        self.music_player = arcade.play_sound(self.music, loop=True)
+
+    def on_hide_view(self):
+        if self.music_player:
+            arcade.stop_sound(self.music_player)
 
     def on_key_press(self, key, modifiers):
         self.keys_pressed.add(key)

@@ -1560,7 +1560,7 @@ class Confetti(arcade.Sprite):
         # Скорость и вращение
         self.change_x = random.uniform(-5, 5)
         self.change_y = random.uniform(2, 8)
-        self.change_angle = random.uniform(-15, 15)
+        self.change_angle = random.uniform(-15, 15)#dd
 
         # Таймер жизни
         self.lifetime = 5.0

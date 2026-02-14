@@ -228,25 +228,43 @@ class NameView(arcade.View):
         self.manager.add(self.name_2_field)
 
         self.botton_sprite = arcade.Sprite("pictures/botton.png", scale=0.5)
-        self.botton_sprite.center_x = SCREEN_WIDTH // 2
+        self.botton_sprite.center_x = SCREEN_WIDTH // 2 - 180
         self.botton_sprite.center_y = SCREEN_HEIGHT // 2 - 190
         self.all_sprites.append(self.botton_sprite)
+        self.botton_sprite_back = arcade.Sprite("pictures/botton.png", scale=0.5)
+        self.botton_sprite_back.center_x = SCREEN_WIDTH // 2 + 180
+        self.botton_sprite_back.center_y = SCREEN_HEIGHT // 2 - 190
+        self.all_sprites.append(self.botton_sprite_back)
 
         self.round_text = arcade.Text(
-            "ENTER PLAYER NAMES",
+            "Новая игра\nНазовите игроков",
             x=SCREEN_WIDTH // 2,
-            y=SCREEN_HEIGHT // 2 + 90,
+            y=SCREEN_HEIGHT // 2 + 140,
             color=arcade.color.YELLOW_ROSE,
             font_size=50,
             font_name="Impact",
             anchor_x="center",
             anchor_y="center",
-            bold=False
+            bold=False,
+            multiline=True,
+            width=800,
+            align="center",
         )
 
         self.Start_text = arcade.Text(
-            "Start",
-            x=SCREEN_WIDTH // 2,
+            "Старт",
+            x=SCREEN_WIDTH // 2 - 180,
+            y=SCREEN_HEIGHT // 2 - 185,
+            color=arcade.color.YELLOW_ROSE,
+            font_size=40,
+            font_name="Impact",
+            anchor_x="center",
+            anchor_y="center",
+            bold=False
+        )
+        self.Back_text = arcade.Text(
+            "Назад",
+            x=SCREEN_WIDTH // 2 + 180,
             y=SCREEN_HEIGHT // 2 - 185,
             color=arcade.color.YELLOW_ROSE,
             font_size=40,
@@ -263,6 +281,7 @@ class NameView(arcade.View):
         self.all_sprites.draw()
         self.round_text.draw()
         self.Start_text.draw()
+        self.Back_text.draw()
         if self.flag is True:
             self.error_text.draw()
 
@@ -271,27 +290,31 @@ class NameView(arcade.View):
         global NAME_1
         global NAME_2
         # проверка нажатия на кнопку сложности
-        if len(self.name_1_field.text) + len(self.name_2_field.text) < 14:
-            if self.botton_sprite.collides_with_point((x, y)):
+        if self.botton_sprite.collides_with_point((x, y)):
+            if len(self.name_1_field.text) + len(self.name_2_field.text) < 16:
                 NAME_1 = self.name_1_field.text
                 NAME_2 = self.name_2_field.text
                 game_view = RoundView()
                 self.window.show_view(game_view)
                 self.manager.disable()
-            self.flag = False
-        else:
-            self.error_text = arcade.Text(
-                "Names are too big!",
-                x=SCREEN_WIDTH // 2,
-                y=SCREEN_HEIGHT // 2 - 85,
-                color=arcade.color.RED,
-                font_size=15,
-                font_name="Impact",
-                anchor_x="center",
-                anchor_y="center",
-                bold=False
-            )
-            self.flag = True
+                self.flag = False
+            else:
+                self.error_text = arcade.Text(
+                    "Names are too big!",
+                    x=SCREEN_WIDTH // 2,
+                    y=SCREEN_HEIGHT // 2 - 85,
+                    color=arcade.color.RED,
+                    font_size=15,
+                    font_name="Impact",
+                    anchor_x="center",
+                    anchor_y="center",
+                    bold=False
+                )
+                self.flag = True
+        elif self.botton_sprite_back.collides_with_point((x, y)):
+            game_view = WelcomeView()
+            self.window.show_view(game_view)
+            self.manager.disable()
 
 
 # ====== Класс дл экрана выбора раундов =====
@@ -315,6 +338,7 @@ class RoundView(arcade.View):
         self.botton_sprite.center_x = SCREEN_WIDTH // 2 - 180
         self.botton_sprite.center_y = SCREEN_HEIGHT // 2 - 190
         self.all_sprites.append(self.botton_sprite)
+
         if Plays > 1:
             self.botton_sprite_back = arcade.Sprite("pictures/botton.png", scale=0.5)
             self.botton_sprite_back.center_x = SCREEN_WIDTH // 2 + 160
@@ -335,10 +359,10 @@ class RoundView(arcade.View):
             font_size=50,
             multiline=True,
             width=800,
+            align="center",
             font_name="Impact",
             anchor_x="center",
             anchor_y="center",
-            align="center",
             bold=False
         )
 
@@ -1300,7 +1324,6 @@ class EndView(arcade.View):
         arcade.set_background_color(arcade.color.DARK_BLUE_GRAY)
         self.player = GameWindow.player
 
-        self.win_sound = arcade.load_sound("sounds/soundofwictory.mp3")
         # параметры пульсации текста
         self.time_elapsed = 0
         self.pulse_speed = 7
@@ -1347,13 +1370,6 @@ class EndView(arcade.View):
             bold=False
         )
 
-        # конфети
-        self.confetti_list = arcade.SpriteList()
-        for _ in range(150):
-            p = Confetti(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
-            self.confetti_list.append(p)
-
-        self.sound_played = False
 
         global NAME_1
         global NAME_2
@@ -1371,7 +1387,7 @@ class EndView(arcade.View):
             x=SCREEN_WIDTH // 2,
             y=SCREEN_HEIGHT // 2 - 25,
             color=arcade.color.YELLOW_ROSE,
-            font_size=50,
+            font_size=40,
             font_name="Impact",
             anchor_x="center",
             anchor_y="center",
@@ -1388,7 +1404,7 @@ class EndView(arcade.View):
             x=SCREEN_WIDTH // 2,
             y=SCREEN_HEIGHT // 2 + 150,
             color=arcade.color.YELLOW_ROSE,
-            font_size=50,
+            font_size=40,
             font_name="Impact",
             anchor_x="center",
             anchor_y="center",
@@ -1400,18 +1416,11 @@ class EndView(arcade.View):
 
     def on_show_view(self):
         self.window.set_size(SCREEN_WIDTH, SCREEN_HEIGHT)
-        if not self.sound_played:
-            arcade.play_sound(self.win_sound)
-            self.sound_played = True
 
-    def on_hide_view(self):
-        self.sound_played = False
 
     def on_update(self, delta_time):
         # обновление времени
         self.time_elapsed += delta_time
-        # обновление конфети
-        self.confetti_list.update(delta_time)
 
     def on_draw(self):
         self.clear()
@@ -1419,7 +1428,6 @@ class EndView(arcade.View):
         self.score_gl.draw()
         self.score_end.draw()
         # отрисовка конфети
-        self.confetti_list.draw()
         self.text_1.draw()
         self.text_2.draw()
 
@@ -1534,7 +1542,7 @@ class SetupView_2(arcade.View):
                 for score in k:
                     SCORE.append(int(score.rstrip()))
         elif self.botton_sprite_2.collides_with_point((x, y)):
-            game_view = SecondView()
+            game_view = EndView()
             self.window.show_view(game_view)
 
 

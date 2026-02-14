@@ -484,7 +484,7 @@ class WinView(arcade.View):
         self.sound_played = False
 
         # Планируем вызов функции через 5 секунд
-        arcade.schedule_once(self.close_app, 5)
+        arcade.schedule_once(self.close_app, 3)
 
     def on_show_view(self):
         self.window.set_size(SCREEN_WIDTH, SCREEN_HEIGHT)
@@ -1332,14 +1332,15 @@ class EndView(arcade.View):
         # создание списка спрайтов
         self.all_sprites = arcade.SpriteList()
         # создание кнопок-спрайтов
-        self.botton_sprite_1 = arcade.Sprite("pictures/botton.png", scale=0.8)
-        self.botton_sprite_1.center_x = SCREEN_WIDTH // 2 - 220
+        self.botton_sprite_1 = arcade.Sprite("pictures/botton.png", scale=0.7)
+        self.botton_sprite_1.center_x = SCREEN_WIDTH // 2 - 200
         self.botton_sprite_1.center_y = SCREEN_HEIGHT // 2 - 200
+        self.botton_sprite_1.width = 350
         self.all_sprites.append(self.botton_sprite_1)
-        self.botton_sprite_2 = arcade.Sprite("pictures/botton.png", scale=0.8)
-        self.botton_sprite_2.center_x = SCREEN_WIDTH // 2 + 160
+        self.botton_sprite_2 = arcade.Sprite("pictures/botton.png", scale=0.7)
+        self.botton_sprite_2.center_x = SCREEN_WIDTH // 2 + 200
         self.botton_sprite_2.center_y = SCREEN_HEIGHT // 2 - 200
-        self.botton_sprite_2.width = 440
+        self.botton_sprite_2.width = 350
         self.all_sprites.append(self.botton_sprite_2)
 
         self.setup_sprite = arcade.Sprite("pictures/setup.png", scale=0.10)
@@ -1348,11 +1349,11 @@ class EndView(arcade.View):
         self.all_sprites.append(self.setup_sprite)
 
         self.text_1 = arcade.Text(
-            f"Назад",
-            x=SCREEN_WIDTH // 2 - 220,
+            f"Еще один раунд",
+            x=SCREEN_WIDTH // 2 - 200,
             y=SCREEN_HEIGHT // 2 - 200,
             color=arcade.color.YELLOW_ROSE,
-            font_size=45,
+            font_size=30,
             font_name="Impact",
             anchor_x="center",
             anchor_y="center",
@@ -1360,10 +1361,10 @@ class EndView(arcade.View):
         )
         self.text_2 = arcade.Text(
             f"Завершить игру",
-            x=SCREEN_WIDTH // 2 + 160,
+            x=SCREEN_WIDTH // 2 + 200,
             y=SCREEN_HEIGHT // 2 - 200,
             color=arcade.color.YELLOW_ROSE,
-            font_size=45,
+            font_size=30,
             font_name="Impact",
             anchor_x="center",
             anchor_y="center",

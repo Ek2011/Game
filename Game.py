@@ -21,6 +21,7 @@ NAME_2 = ""
 count_1 = None
 count_2 = None
 Plays = None
+LANGUAGE = ""
 
 # ======= Класс для первого окна ======
 class WelcomeView(arcade.View):
@@ -123,7 +124,7 @@ class WelcomeView(arcade.View):
             # открытие второго окна
             global Plays
             Plays = 1
-            game_view = NameView()
+            game_view = Language_View()
             self.window.show_view(game_view)
         elif self.sprite_score.collides_with_point((x, y)):
             game_view = ScoreView()
@@ -205,11 +206,83 @@ class ScoreView(arcade.View):
             game_view = WelcomeView()
             self.window.show_view(game_view)
 
+class Language_View(arcade.View):
+    def __init__(self):
+        super().__init__()
+        arcade.set_background_color(arcade.color.DARK_BLUE_GRAY)
+
+        self.all_sprites = arcade.SpriteList()
+
+        self.eng_sprite = arcade.Sprite("pictures/botton.png", scale=0.8)
+        self.eng_sprite.center_x = SCREEN_WIDTH // 2
+        self.eng_sprite.center_y = SCREEN_HEIGHT // 2 + 75
+        self.all_sprites.append(self.eng_sprite)
+
+        self.rus_sprite = arcade.Sprite("pictures/botton.png", scale=0.8)
+        self.rus_sprite.center_x = SCREEN_WIDTH // 2
+        self.rus_sprite.center_y = SCREEN_HEIGHT // 2 - 75
+        self.all_sprites.append(self.rus_sprite)
+
+        self.eng_text = arcade.Text(
+            "English",
+            x=SCREEN_WIDTH // 2,
+            y=SCREEN_HEIGHT // 2 + 75,
+            color=arcade.color.YELLOW_ROSE,
+            font_size=50,
+            font_name="Impact",
+            anchor_x="center",
+            anchor_y="center",
+            bold=False
+        )
+
+        self.rus_text = arcade.Text(
+            "Русский",
+            x=SCREEN_WIDTH // 2,
+            y=SCREEN_HEIGHT // 2 - 75,
+            color=arcade.color.YELLOW_ROSE,
+            font_size=50,
+            font_name="Impact",
+            anchor_x="center",
+            anchor_y="center",
+            bold=False
+        )
+
+        self.choose_text = arcade.Text(
+            "Choose language /  Выберите язык",
+            x=SCREEN_WIDTH // 2,
+            y=SCREEN_HEIGHT - 75,
+            color=arcade.color.YELLOW_ROSE,
+            font_size=40,
+            font_name="Impact",
+            anchor_x="center",
+            anchor_y="center",
+            bold=False
+        )
+
+    def on_mouse_press(self, x, y, button, modifiers):
+        global LANGUAGE
+        if self.eng_sprite.collides_with_point((x, y)):
+            LANGUAGE = "ENG"
+            game_view = NameView()
+            self.window.show_view(game_view)
+        elif self.rus_sprite.collides_with_point((x, y)):
+            LANGUAGE = "RUS"
+            game_view = NameView()
+            self.window.show_view(game_view)
+
+    def on_draw(self):
+        self.clear()
+        self.all_sprites.draw()
+        self.eng_text.draw()
+        self.rus_text.draw()
+        self.choose_text.draw()
+
 
 class NameView(arcade.View):
     def __init__(self):
         super().__init__()
         self.flag = False
+        global LANGUAGE
 
         self.all_sprites = arcade.SpriteList()
         # Создаем менеджер GUI
@@ -236,43 +309,82 @@ class NameView(arcade.View):
         self.botton_sprite_back.center_y = SCREEN_HEIGHT // 2 - 190
         self.all_sprites.append(self.botton_sprite_back)
 
-        self.round_text = arcade.Text(
-            "Новая игра\nНазовите игроков",
-            x=SCREEN_WIDTH // 2,
-            y=SCREEN_HEIGHT // 2 + 140,
-            color=arcade.color.YELLOW_ROSE,
-            font_size=50,
-            font_name="Impact",
-            anchor_x="center",
-            anchor_y="center",
-            bold=False,
-            multiline=True,
-            width=800,
-            align="center",
-        )
+        if LANGUAGE == "ENG":
+            self.round_text = arcade.Text(
+                "New game\nEnter player names",
+                x=SCREEN_WIDTH // 2,
+                y=SCREEN_HEIGHT // 2 + 140,
+                color=arcade.color.YELLOW_ROSE,
+                font_size=50,
+                font_name="Impact",
+                anchor_x="center",
+                anchor_y="center",
+                bold=False,
+                multiline=True,
+                width=800,
+                align="center",
+            )
 
-        self.Start_text = arcade.Text(
-            "Старт",
-            x=SCREEN_WIDTH // 2 - 180,
-            y=SCREEN_HEIGHT // 2 - 185,
-            color=arcade.color.YELLOW_ROSE,
-            font_size=40,
-            font_name="Impact",
-            anchor_x="center",
-            anchor_y="center",
-            bold=False
-        )
-        self.Back_text = arcade.Text(
-            "Назад",
-            x=SCREEN_WIDTH // 2 + 180,
-            y=SCREEN_HEIGHT // 2 - 185,
-            color=arcade.color.YELLOW_ROSE,
-            font_size=40,
-            font_name="Impact",
-            anchor_x="center",
-            anchor_y="center",
-            bold=False
-        )
+            self.Start_text = arcade.Text(
+                "Start",
+                x=SCREEN_WIDTH // 2 - 180,
+                y=SCREEN_HEIGHT // 2 - 185,
+                color=arcade.color.YELLOW_ROSE,
+                font_size=40,
+                font_name="Impact",
+                anchor_x="center",
+                anchor_y="center",
+                bold=False
+            )
+            self.Back_text = arcade.Text(
+                "Back",
+                x=SCREEN_WIDTH // 2 + 180,
+                y=SCREEN_HEIGHT // 2 - 185,
+                color=arcade.color.YELLOW_ROSE,
+                font_size=40,
+                font_name="Impact",
+                anchor_x="center",
+                anchor_y="center",
+                bold=False
+            )
+        else:
+            self.round_text = arcade.Text(
+                "Новая игра\nНазовите игроков",
+                x=SCREEN_WIDTH // 2,
+                y=SCREEN_HEIGHT // 2 + 140,
+                color=arcade.color.YELLOW_ROSE,
+                font_size=50,
+                font_name="Impact",
+                anchor_x="center",
+                anchor_y="center",
+                bold=False,
+                multiline=True,
+                width=800,
+                align="center",
+            )
+
+            self.Start_text = arcade.Text(
+                "Старт",
+                x=SCREEN_WIDTH // 2 - 180,
+                y=SCREEN_HEIGHT // 2 - 185,
+                color=arcade.color.YELLOW_ROSE,
+                font_size=40,
+                font_name="Impact",
+                anchor_x="center",
+                anchor_y="center",
+                bold=False
+            )
+            self.Back_text = arcade.Text(
+                "Назад",
+                x=SCREEN_WIDTH // 2 + 180,
+                y=SCREEN_HEIGHT // 2 - 185,
+                color=arcade.color.YELLOW_ROSE,
+                font_size=40,
+                font_name="Impact",
+                anchor_x="center",
+                anchor_y="center",
+                bold=False
+            )
 
 
     def on_draw(self):
@@ -299,17 +411,30 @@ class NameView(arcade.View):
                 self.manager.disable()
                 self.flag = False
             else:
-                self.error_text = arcade.Text(
-                    "Names are too big!",
-                    x=SCREEN_WIDTH // 2,
-                    y=SCREEN_HEIGHT // 2 - 85,
-                    color=arcade.color.RED,
-                    font_size=15,
-                    font_name="Impact",
-                    anchor_x="center",
-                    anchor_y="center",
-                    bold=False
-                )
+                if LANGUAGE == "ENG":
+                    self.error_text = arcade.Text(
+                        "Names are too big!",
+                        x=SCREEN_WIDTH // 2,
+                        y=SCREEN_HEIGHT // 2 - 85,
+                        color=arcade.color.RED,
+                        font_size=15,
+                        font_name="Impact",
+                        anchor_x="center",
+                        anchor_y="center",
+                        bold=False
+                    )
+                else:
+                    self.error_text = arcade.Text(
+                        "Имена слишком длинные!",
+                        x=SCREEN_WIDTH // 2,
+                        y=SCREEN_HEIGHT // 2 - 85,
+                        color=arcade.color.RED,
+                        font_size=15,
+                        font_name="Impact",
+                        anchor_x="center",
+                        anchor_y="center",
+                        bold=False
+                    )
                 self.flag = True
         elif self.botton_sprite_back.collides_with_point((x, y)):
             game_view = WelcomeView()
@@ -351,48 +476,25 @@ class RoundView(arcade.View):
             self.botton_sprite_back.center_y = SCREEN_HEIGHT // 2 - 190
             self.all_sprites.append(self.botton_sprite_back)
 
-        self.round_text = arcade.Text(
-            f"Раунд {Plays}\nИграем до какого счета?",
-            x=SCREEN_WIDTH // 2,
-            y=SCREEN_HEIGHT // 2 + 100,
-            color=arcade.color.YELLOW_ROSE,
-            font_size=50,
-            multiline=True,
-            width=800,
-            align="center",
-            font_name="Impact",
-            anchor_x="center",
-            anchor_y="center",
-            bold=False
-        )
-
-        self.Start_text = arcade.Text(
-            "Далее",
-            x=SCREEN_WIDTH // 2 - 180,
-            y=SCREEN_HEIGHT // 2 - 185,
-            color=arcade.color.YELLOW_ROSE,
-            font_size=40,
-            font_name="Impact",
-            anchor_x="center",
-            anchor_y="center",
-            bold=False
-        )
-        if Plays > 1:
-            self.Back_text = arcade.Text(
-                "Завершить игру",
-                x=SCREEN_WIDTH // 2 + 160,
-                y=SCREEN_HEIGHT // 2 - 185,
+        if LANGUAGE == "ENG":
+            self.round_text = arcade.Text(
+                f"Round {Plays}\nWhat's the score until we play?",
+                x=SCREEN_WIDTH // 2,
+                y=SCREEN_HEIGHT // 2 + 100,
                 color=arcade.color.YELLOW_ROSE,
-                font_size=30,
+                font_size=50,
+                multiline=True,
+                width=800,
+                align="center",
                 font_name="Impact",
                 anchor_x="center",
                 anchor_y="center",
                 bold=False
             )
-        else:
-            self.Back_text = arcade.Text(
-                "Назад",
-                x=SCREEN_WIDTH // 2 + 180,
+
+            self.Start_text = arcade.Text(
+                "Next",
+                x=SCREEN_WIDTH // 2 - 180,
                 y=SCREEN_HEIGHT // 2 - 185,
                 color=arcade.color.YELLOW_ROSE,
                 font_size=40,
@@ -401,6 +503,81 @@ class RoundView(arcade.View):
                 anchor_y="center",
                 bold=False
             )
+            if Plays > 1:
+                self.Back_text = arcade.Text(
+                    "Finish the game",
+                    x=SCREEN_WIDTH // 2 + 160,
+                    y=SCREEN_HEIGHT // 2 - 185,
+                    color=arcade.color.YELLOW_ROSE,
+                    font_size=30,
+                    font_name="Impact",
+                    anchor_x="center",
+                    anchor_y="center",
+                    bold=False
+                )
+            else:
+                self.Back_text = arcade.Text(
+                    "Back",
+                    x=SCREEN_WIDTH // 2 + 180,
+                    y=SCREEN_HEIGHT // 2 - 185,
+                    color=arcade.color.YELLOW_ROSE,
+                    font_size=40,
+                    font_name="Impact",
+                    anchor_x="center",
+                    anchor_y="center",
+                    bold=False
+                )
+        else:
+            self.round_text = arcade.Text(
+                f"Раунд {Plays}\nИграем до какого счета?",
+                x=SCREEN_WIDTH // 2,
+                y=SCREEN_HEIGHT // 2 + 100,
+                color=arcade.color.YELLOW_ROSE,
+                font_size=50,
+                multiline=True,
+                width=800,
+                align="center",
+                font_name="Impact",
+                anchor_x="center",
+                anchor_y="center",
+                bold=False
+            )
+
+            self.Start_text = arcade.Text(
+                "Далее",
+                x=SCREEN_WIDTH // 2 - 180,
+                y=SCREEN_HEIGHT // 2 - 185,
+                color=arcade.color.YELLOW_ROSE,
+                font_size=40,
+                font_name="Impact",
+                anchor_x="center",
+                anchor_y="center",
+                bold=False
+            )
+            if Plays > 1:
+                self.Back_text = arcade.Text(
+                    "Завершить игру",
+                    x=SCREEN_WIDTH // 2 + 160,
+                    y=SCREEN_HEIGHT // 2 - 185,
+                    color=arcade.color.YELLOW_ROSE,
+                    font_size=30,
+                    font_name="Impact",
+                    anchor_x="center",
+                    anchor_y="center",
+                    bold=False
+                )
+            else:
+                self.Back_text = arcade.Text(
+                    "Назад",
+                    x=SCREEN_WIDTH // 2 + 180,
+                    y=SCREEN_HEIGHT // 2 - 185,
+                    color=arcade.color.YELLOW_ROSE,
+                    font_size=40,
+                    font_name="Impact",
+                    anchor_x="center",
+                    anchor_y="center",
+                    bold=False
+                )
 
     def on_mouse_press(self, x, y, button, modifiers):
         global Round
@@ -414,17 +591,30 @@ class RoundView(arcade.View):
                 self.window.show_view(game_view)
                 self.exep = False
             except ValueError:
-                self.error_text = arcade.Text(
-                    "enter the number!",
-                    x=SCREEN_WIDTH // 2,
-                    y=SCREEN_HEIGHT // 2 - 85,
-                    color=arcade.color.RED,
-                    font_size=15,
-                    font_name="Impact",
-                    anchor_x="center",
-                    anchor_y="center",
-                    bold=False
-                )
+                if LANGUAGE == "ENG":
+                    self.error_text = arcade.Text(
+                        "enter the number!",
+                        x=SCREEN_WIDTH // 2,
+                        y=SCREEN_HEIGHT // 2 - 85,
+                        color=arcade.color.RED,
+                        font_size=15,
+                        font_name="Impact",
+                        anchor_x="center",
+                        anchor_y="center",
+                        bold=False
+                    )
+                else:
+                    self.error_text = arcade.Text(
+                        "введите число!",
+                        x=SCREEN_WIDTH // 2,
+                        y=SCREEN_HEIGHT // 2 - 85,
+                        color=arcade.color.RED,
+                        font_size=15,
+                        font_name="Impact",
+                        anchor_x="center",
+                        anchor_y="center",
+                        bold=False
+                    )
                 self.exep = True
         elif self.botton_sprite_back.collides_with_point((x, y)):
             if Plays > 1:
@@ -511,28 +701,53 @@ class WinView(arcade.View):
         original_font_size = 50
         # обновление текста (для пульсации)
         if SCORE[0] > SCORE[1]:
-            pulsating_text = arcade.Text(
-                f"{NAME_1} WINS!",
-                x=SCREEN_WIDTH // 2,
-                y=SCREEN_HEIGHT // 2 + 100,
-                color=arcade.color.YELLOW_ROSE,
-                font_size=int(original_font_size * current_scale),
-                font_name="Impact",
-                anchor_x="center",
-                anchor_y="center",
-                bold=False
-            )
+            if LANGUAGE == "ENG":
+                pulsating_text = arcade.Text(
+                    f"{NAME_1} WINS!",
+                    x=SCREEN_WIDTH // 2,
+                    y=SCREEN_HEIGHT // 2 + 100,
+                    color=arcade.color.YELLOW_ROSE,
+                    font_size=int(original_font_size * current_scale),
+                    font_name="Impact",
+                    anchor_x="center",
+                    anchor_y="center",
+                    bold=False
+                )
+            else:
+                pulsating_text = arcade.Text(
+                    f"{NAME_1} ПОБЕЖДАЕТ!",
+                    x=SCREEN_WIDTH // 2,
+                    y=SCREEN_HEIGHT // 2 + 100,
+                    color=arcade.color.YELLOW_ROSE,
+                    font_size=int(original_font_size * current_scale),
+                    font_name="Impact",
+                    anchor_x="center",
+                    anchor_y="center",
+                    bold=False
+                )
         else:
-            pulsating_text = arcade.Text(
-                f"{NAME_2} WINS!",
-                x=SCREEN_WIDTH // 2,
-                y=SCREEN_HEIGHT // 2 + 100,
-                color=arcade.color.YELLOW_ROSE,
-                font_size=int(original_font_size * current_scale),
-                font_name="Impact",
-                anchor_x="center",
-                anchor_y="center",
-                bold=False)
+            if LANGUAGE == "ENG":
+                pulsating_text = arcade.Text(
+                    f"{NAME_2} WINS!",
+                    x=SCREEN_WIDTH // 2,
+                    y=SCREEN_HEIGHT // 2 + 100,
+                    color=arcade.color.YELLOW_ROSE,
+                    font_size=int(original_font_size * current_scale),
+                    font_name="Impact",
+                    anchor_x="center",
+                    anchor_y="center",
+                    bold=False)
+            else:
+                pulsating_text = arcade.Text(
+                    f"{NAME_2} ПОБЕЖДАЕТ!",
+                    x=SCREEN_WIDTH // 2,
+                    y=SCREEN_HEIGHT // 2 + 100,
+                    color=arcade.color.YELLOW_ROSE,
+                    font_size=int(original_font_size * current_scale),
+                    font_name="Impact",
+                    anchor_x="center",
+                    anchor_y="center",
+                    bold=False)
         # отрисовка пульсирующего текста
         pulsating_text.draw()
         # отрисовка конфети
@@ -627,28 +842,41 @@ class SecondView(arcade.View):
             x=SCREEN_WIDTH // 2,
             y=SCREEN_HEIGHT // 2 - 100,
             color=arcade.color.YELLOW_ROSE,
-            font_size=30,
+            font_size=25,
             font_name="Impact",
             anchor_x="center",
             anchor_y="center",
             bold=False
         )
-        self.back_text = arcade.Text(
-            "Назад",
-            x=100,
-            y=SCREEN_HEIGHT // 2 - 200,
-            color=arcade.color.YELLOW_ROSE,
-            font_size=30,
-            font_name="Impact",
-            anchor_x="center",
-            anchor_y="center",
-            bold=False
-        )
+        if LANGUAGE == "ENG":
+            self.back_text = arcade.Text(
+                "Back",
+                x=100,
+                y=SCREEN_HEIGHT // 2 - 200,
+                color=arcade.color.YELLOW_ROSE,
+                font_size=30,
+                font_name="Impact",
+                anchor_x="center",
+                anchor_y="center",
+                bold=False
+            )
+        else:
+            self.back_text = arcade.Text(
+                "Назад",
+                x=100,
+                y=SCREEN_HEIGHT // 2 - 200,
+                color=arcade.color.YELLOW_ROSE,
+                font_size=30,
+                font_name="Impact",
+                anchor_x="center",
+                anchor_y="center",
+                bold=False
+            )
         self.insane_text = arcade.Text("",
                                        x=SCREEN_WIDTH // 2,
                                        y=SCREEN_HEIGHT // 2 - 200,
                                        color=arcade.color.YELLOW_ROSE,
-                                       font_size=30,
+                                       font_size=25,
                                        font_name="Impact",
                                        anchor_x="center",
                                        anchor_y="center",
@@ -677,31 +905,54 @@ class SecondView(arcade.View):
         # значения текстовых обьектов
 
         # значения текстовых обьектов
-        self.choose_text.value = "CHOOSE DIFFICULTY"
-        self.easy_text.value = "EASY"
-        self.medium_text.value = "MEDIUM"
-        self.hard_text.value = "HARD"
-        self.insane_text.value = "INSANE"
+        if LANGUAGE == "ENG":
+            self.choose_text.value = "CHOOSE DIFFICULTY"
+            self.easy_text.value = "EASY"
+            self.medium_text.value = "MEDIUM"
+            self.hard_text.value = "HARD"
+            self.insane_text.value = "INSANE"
+        else:
+            self.choose_text.value = "ВЫБЕРИТЕ СЛОЖНОСТЬ"
+            self.easy_text.value = "ЛЕГКИЙ"
+            self.medium_text.value = "СРЕДНИЙ"
+            self.hard_text.value = "СЛОЖНЫЙ"
+            self.insane_text.value = "БЕЗУМНЫЙ"
 
 
         # значальный размер шрифта
         original_font_size = 35
 
         # обновление текста (для пульсации)
-        pulsating_text = arcade.Text(
-            "Для начала раунда, выберите\nуровень сложности",
-            x=SCREEN_WIDTH // 2,
-            y=SCREEN_HEIGHT // 2 + 200,
-            color=arcade.color.YELLOW_ROSE,
-            font_size=int(original_font_size),
-            font_name="Impact",
-            anchor_x="center",
-            anchor_y="center",
-            bold=False,
-            multiline = True,
-            align="center",
-            width=800
-        )
+        if LANGUAGE == "ENG":
+            pulsating_text = arcade.Text(
+                "To start a round, select \ndifficulty level",
+                x=SCREEN_WIDTH // 2,
+                y=SCREEN_HEIGHT // 2 + 200,
+                color=arcade.color.YELLOW_ROSE,
+                font_size=int(original_font_size),
+                font_name="Impact",
+                anchor_x="center",
+                anchor_y="center",
+                bold=False,
+                multiline = True,
+                align="center",
+                width=800
+            )
+        else:
+            pulsating_text = arcade.Text(
+                "Для начала раунда, выберите\nуровень сложности",
+                x=SCREEN_WIDTH // 2,
+                y=SCREEN_HEIGHT // 2 + 200,
+                color=arcade.color.YELLOW_ROSE,
+                font_size=int(original_font_size),
+                font_name="Impact",
+                anchor_x="center",
+                anchor_y="center",
+                bold=False,
+                multiline=True,
+                align="center",
+                width=800
+            )
 
         self.all_sprites.draw()
 
@@ -770,35 +1021,66 @@ class InstructionView(arcade.View):
         super().__init__()
         arcade.set_background_color(arcade.color.DARK_BLUE_GRAY)
 
-        instruction_lines = [
-            "GAME INSTRUCTIONS",
-            "",
-            "WELCOME TO PONG!",
-            "",
-            "CONTROL:",
-            "• Player on the left: W (up) and S (down) keys",
-            "• Player on the right: arrows ↑ (up) and ↓ (down)",
-            "",
-            "RULES OF THE GAME:",
-            "• Start the game by pressing START",
-            "• The score is displayed at the top of the screen",
-            "• Exit the game: LEAVE button",
-            "",
-            "DIFFICULTY LEVELS:",
-            "• Light: Ball speed = 4",
-            "• Medium: ball speed = 6",
-            "• Hard: ball speed = 8",
-            "• Insane: Ball speed = 12",
-            "",
-            "SCORING SYSTEM:",
-            "• Easy: 1 point for a win",
-            "• Medium: 3 points for a win",
-            "• Hard: 5 points for a win",
-            "• Insane: 7 points for a win",
-            "",
-            "The score is saved after each game.",
-            "We wish you a good game!"
-        ]
+        if LANGUAGE == "ENG":
+            instruction_lines = [
+                "GAME INSTRUCTIONS",
+                "",
+                "WELCOME TO PONG!",
+                "",
+                "CONTROL:",
+                "• Player on the left: W (up) and S (down) keys",
+                "• Player on the right: arrows ↑ (up) and ↓ (down)",
+                "",
+                "RULES OF THE GAME:",
+                "• Start the game by pressing START",
+                "• The score is displayed at the top of the screen",
+                "• Exit the game: LEAVE button",
+                "",
+                "DIFFICULTY LEVELS:",
+                "• Light: Ball speed = 4",
+                "• Medium: ball speed = 6",
+                "• Hard: ball speed = 8",
+                "• Insane: Ball speed = 12",
+                "",
+                "SCORING SYSTEM:",
+                "• Easy: 1 point for a win",
+                "• Medium: 3 points for a win",
+                "• Hard: 5 points for a win",
+                "• Insane: 7 points for a win",
+                "",
+                "The score is saved after each game.",
+                "We wish you a good game!"
+            ]
+        else:
+            instruction_lines = [
+                "ИНСТРУКЦИЯ К ИГРЕ",
+                "",
+                "ДОБРО ПОЖАЛОВАТЬ В ПОНГ!",
+                "",
+                "УПРАВЛЕНИЕ:",
+                "• Игрок слева: клавиши W (вверх) и S (вниз).",
+                "• Игрок справа: стрелки ↑ (вверх) и ↓ (вниз)",
+                "",
+                "ПРАВИЛА ИГРЫ:",
+                "• Начните игру, нажав кнопку START",
+                "• Результат отображается в верхней части экрана",
+                "• Выход из игры: кнопка ВЫЙТИ",
+                "",
+                "УРОВНИ СЛОЖНОСТИ:",
+                "• Легкий: Скорость мяча = 4",
+                "• Средний: скорость мяча = 6",
+                "• Сложный: скорость мяча = 8",
+                "• Безумный: скорость мяча = 8",
+                "",
+                "СИСТЕМА ОЧКОВ",
+                "• Легкий: 1 очко за победу",
+                "• Средний: 3 очка за победу",
+                "• Сложный: 5 очков за победу",
+                "• Безумный: 7 очков за победу",
+                "",
+                "Результат сохраняется после каждой игры",
+                "Желаем вам удачной игры!"
+            ]
 
         self.text_lines = list()
         start_y = SCREEN_HEIGHT - 50
@@ -827,17 +1109,30 @@ class InstructionView(arcade.View):
         self.back_button.center_y = 60
         self.all_sprites.append(self.back_button)
 
-        self.back_text = arcade.Text(
-            "BACK",
-            x=SCREEN_WIDTH // 2,
-            y=60,
-            color=arcade.color.YELLOW_ROSE,
-            font_size=25,
-            font_name="Impact",
-            anchor_x="center",
-            anchor_y="center",
-            bold=True
-        )
+        if LANGUAGE == "ENG":
+            self.back_text = arcade.Text(
+                "BACK",
+                x=SCREEN_WIDTH // 2,
+                y=60,
+                color=arcade.color.YELLOW_ROSE,
+                font_size=25,
+                font_name="Impact",
+                anchor_x="center",
+                anchor_y="center",
+                bold=True
+            )
+        else:
+            self.back_text = arcade.Text(
+                "НАЗАД",
+                x=SCREEN_WIDTH // 2,
+                y=60,
+                color=arcade.color.YELLOW_ROSE,
+                font_size=25,
+                font_name="Impact",
+                anchor_x="center",
+                anchor_y="center",
+                bold=True
+            )
 
     def on_draw(self):
         self.clear()
@@ -1070,6 +1365,7 @@ class GameWindow(arcade.View):
         dx2, dy2 = 0, 0
         moving1 = False
         moving2 = False
+        global count_1, count_2
 
         # Определяем направление движения
         if arcade.key.W in self.keys_pressed:
@@ -1291,12 +1587,20 @@ class GameWindow(arcade.View):
                                  bold=False)
         score_text.draw()
 
-        leave_text = arcade.Text("LEAVE", SCREEN_WIDTH_GAME // 2, 6,
-                                 arcade.color.YELLOW_ROSE,
-                                 font_size=48,
-                                 font_name="Impact",
-                                 anchor_x="center",
-                                 bold=False)
+        if LANGUAGE == "ENG":
+            leave_text = arcade.Text("LEAVE", SCREEN_WIDTH_GAME // 2, 6,
+                                     arcade.color.YELLOW_ROSE,
+                                     font_size=48,
+                                     font_name="Impact",
+                                     anchor_x="center",
+                                     bold=False)
+        else:
+            leave_text = arcade.Text("ВЫЙТИ", SCREEN_WIDTH_GAME // 2, 6,
+                                     arcade.color.YELLOW_ROSE,
+                                     font_size=48,
+                                     font_name="Impact",
+                                     anchor_x="center",
+                                     bold=False)
         leave_text.draw()
 
         player_1_text = arcade.Text(f"{NAME_1}", 100,
@@ -1348,28 +1652,52 @@ class EndView(arcade.View):
         self.setup_sprite.center_y = SCREEN_HEIGHT - 40
         self.all_sprites.append(self.setup_sprite)
 
-        self.text_1 = arcade.Text(
-            f"Еще один раунд",
-            x=SCREEN_WIDTH // 2 - 200,
-            y=SCREEN_HEIGHT // 2 - 200,
-            color=arcade.color.YELLOW_ROSE,
-            font_size=30,
-            font_name="Impact",
-            anchor_x="center",
-            anchor_y="center",
-            bold=False
-        )
-        self.text_2 = arcade.Text(
-            f"Завершить игру",
-            x=SCREEN_WIDTH // 2 + 200,
-            y=SCREEN_HEIGHT // 2 - 200,
-            color=arcade.color.YELLOW_ROSE,
-            font_size=30,
-            font_name="Impact",
-            anchor_x="center",
-            anchor_y="center",
-            bold=False
-        )
+        if LANGUAGE == "RUS":
+            self.text_1 = arcade.Text(
+                f"Еще один раунд",
+                x=SCREEN_WIDTH // 2 - 200,
+                y=SCREEN_HEIGHT // 2 - 200,
+                color=arcade.color.YELLOW_ROSE,
+                font_size=30,
+                font_name="Impact",
+                anchor_x="center",
+                anchor_y="center",
+                bold=False
+            )
+            self.text_2 = arcade.Text(
+                f"Завершить игру",
+                x=SCREEN_WIDTH // 2 + 200,
+                y=SCREEN_HEIGHT // 2 - 200,
+                color=arcade.color.YELLOW_ROSE,
+                font_size=30,
+                font_name="Impact",
+                anchor_x="center",
+                anchor_y="center",
+                bold=False
+            )
+        else:
+            self.text_1 = arcade.Text(
+                f"One more round",
+                x=SCREEN_WIDTH // 2 - 200,
+                y=SCREEN_HEIGHT // 2 - 200,
+                color=arcade.color.YELLOW_ROSE,
+                font_size=30,
+                font_name="Impact",
+                anchor_x="center",
+                anchor_y="center",
+                bold=False
+            )
+            self.text_2 = arcade.Text(
+                f"Finish the game",
+                x=SCREEN_WIDTH // 2 + 200,
+                y=SCREEN_HEIGHT // 2 - 200,
+                color=arcade.color.YELLOW_ROSE,
+                font_size=30,
+                font_name="Impact",
+                anchor_x="center",
+                anchor_y="center",
+                bold=False
+            )
 
 
         global NAME_1
@@ -1383,37 +1711,68 @@ class EndView(arcade.View):
             for score in k:
                 SCORE.append(int(score.rstrip()))
 
-        self.score_gl = arcade.Text(
-            f"Общий счет за {Plays} раундов\n{NAME_1}-{SCORE[0]}  :  {SCORE[1]}-{NAME_2}",
-            x=SCREEN_WIDTH // 2,
-            y=SCREEN_HEIGHT // 2 - 25,
-            color=arcade.color.YELLOW_ROSE,
-            font_size=40,
-            font_name="Impact",
-            anchor_x="center",
-            anchor_y="center",
-            bold=False,
-            align="center",
-            multiline=True,
-            width=800
-        )
+        if LANGUAGE == "RUS":
+            self.score_gl = arcade.Text(
+                f"Общий счет за {Plays} раундов\n{NAME_1}-{SCORE[0]}  :  {SCORE[1]}-{NAME_2}",
+                x=SCREEN_WIDTH // 2,
+                y=SCREEN_HEIGHT // 2 - 25,
+                color=arcade.color.YELLOW_ROSE,
+                font_size=40,
+                font_name="Impact",
+                anchor_x="center",
+                anchor_y="center",
+                bold=False,
+                align="center",
+                multiline=True,
+                width=800
+            )
 
-        global count_1
-        global count_2
-        self.score_end = arcade.Text(
-            f"Раунд завершен со счетом\n{NAME_1}-{count_1}  :  {count_2}-{NAME_2}",
-            x=SCREEN_WIDTH // 2,
-            y=SCREEN_HEIGHT // 2 + 150,
-            color=arcade.color.YELLOW_ROSE,
-            font_size=40,
-            font_name="Impact",
-            anchor_x="center",
-            anchor_y="center",
-            bold=False,
-            align="center",
-            multiline=True,
-            width=800
-        )
+            global count_1
+            global count_2
+            self.score_end = arcade.Text(
+                f"Раунд завершен со счетом\n{NAME_1}-{count_1}  :  {count_2}-{NAME_2}",
+                x=SCREEN_WIDTH // 2,
+                y=SCREEN_HEIGHT // 2 + 150,
+                color=arcade.color.YELLOW_ROSE,
+                font_size=40,
+                font_name="Impact",
+                anchor_x="center",
+                anchor_y="center",
+                bold=False,
+                align="center",
+                multiline=True,
+                width=800
+            )
+        else:
+            self.score_gl = arcade.Text(
+                f"Total score for {Plays} rounds\n{NAME_1}-{SCORE[0]}  :  {SCORE[1]}-{NAME_2}",
+                x=SCREEN_WIDTH // 2,
+                y=SCREEN_HEIGHT // 2 - 25,
+                color=arcade.color.YELLOW_ROSE,
+                font_size=40,
+                font_name="Impact",
+                anchor_x="center",
+                anchor_y="center",
+                bold=False,
+                align="center",
+                multiline=True,
+                width=800
+            )
+
+            self.score_end = arcade.Text(
+                f"The round ended with a score of\n{NAME_1}-{count_1}  :  {count_2}-{NAME_2}",
+                x=SCREEN_WIDTH // 2,
+                y=SCREEN_HEIGHT // 2 + 150,
+                color=arcade.color.YELLOW_ROSE,
+                font_size=40,
+                font_name="Impact",
+                anchor_x="center",
+                anchor_y="center",
+                bold=False,
+                align="center",
+                multiline=True,
+                width=800
+            )
 
     def on_show_view(self):
         self.window.set_size(SCREEN_WIDTH, SCREEN_HEIGHT)
@@ -1488,17 +1847,30 @@ class SetupView_2(arcade.View):
         self.botton_sprite_2.center_y = SCREEN_HEIGHT // 2 - 50
         self.all_sprites.append(self.botton_sprite_2)
 
-        self.clear_text = arcade.Text(
-            "Clear score",
-            x=SCREEN_WIDTH // 2 - 130,
-            y=SCREEN_HEIGHT // 2 - 50,
-            color=arcade.color.YELLOW_ROSE,
-            font_size=30,
-            font_name="Impact",
-            anchor_x="center",
-            anchor_y="center",
-            bold=False
-        )
+        if LANGUAGE == "ENG":
+            self.clear_text = arcade.Text(
+                "Clear score",
+                x=SCREEN_WIDTH // 2 - 130,
+                y=SCREEN_HEIGHT // 2 - 50,
+                color=arcade.color.YELLOW_ROSE,
+                font_size=30,
+                font_name="Impact",
+                anchor_x="center",
+                anchor_y="center",
+                bold=False
+            )
+        else:
+            self.clear_text = arcade.Text(
+                "Обнулить счет",
+                x=SCREEN_WIDTH // 2 - 130,
+                y=SCREEN_HEIGHT // 2 - 50,
+                color=arcade.color.YELLOW_ROSE,
+                font_size=30,
+                font_name="Impact",
+                anchor_x="center",
+                anchor_y="center",
+                bold=False
+            )
 
     def on_show_view(self):
         self.window.set_size(SCREEN_WIDTH, SCREEN_HEIGHT)
@@ -1515,17 +1887,30 @@ class SetupView_2(arcade.View):
         # значальный размер шрифта
         original_font_size = 50
         # обновление текста (для пульсации)
-        pulsating_text = arcade.Text(
-            f"SETUP",
-            x=SCREEN_WIDTH // 2,
-            y=SCREEN_HEIGHT // 2 + 100,
-            color=arcade.color.YELLOW_ROSE,
-            font_size=int(original_font_size * current_scale),
-            font_name="Impact",
-            anchor_x="center",
-            anchor_y="center",
-            bold=False
-        )
+        if LANGUAGE == "ENG":
+            pulsating_text = arcade.Text(
+                f"SETUP",
+                x=SCREEN_WIDTH // 2,
+                y=SCREEN_HEIGHT // 2 + 100,
+                color=arcade.color.YELLOW_ROSE,
+                font_size=int(original_font_size * current_scale),
+                font_name="Impact",
+                anchor_x="center",
+                anchor_y="center",
+                bold=False
+            )
+        else:
+            pulsating_text = arcade.Text(
+                f"НАСТРОЙКИ",
+                x=SCREEN_WIDTH // 2,
+                y=SCREEN_HEIGHT // 2 + 100,
+                color=arcade.color.YELLOW_ROSE,
+                font_size=int(original_font_size * current_scale),
+                font_name="Impact",
+                anchor_x="center",
+                anchor_y="center",
+                bold=False
+            )
         # отрисовка пульсирующего текста
         pulsating_text.draw()
         self.all_sprites.draw()

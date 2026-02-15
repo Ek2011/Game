@@ -57,7 +57,7 @@ class WelcomeView(arcade.View):
 
         self.start_sprite = arcade.Sprite("pictures/botton.png", scale=0.8)
         self.start_sprite.center_x = SCREEN_WIDTH // 2
-        self.start_sprite.center_y = SCREEN_HEIGHT - 330
+        self.start_sprite.center_y = SCREEN_HEIGHT - 200
         self.all_sprites.append(self.start_sprite)
 
         self.tennball = arcade.Sprite("pictures/tennball.png", scale=0.15)
@@ -67,7 +67,7 @@ class WelcomeView(arcade.View):
 
         self.sprite_score = arcade.Sprite("pictures/botton.png", scale=0.8)
         self.sprite_score.center_x = SCREEN_WIDTH // 2
-        self.sprite_score.center_y = SCREEN_HEIGHT - 200
+        self.sprite_score.center_y = SCREEN_HEIGHT - 330
         self.all_sprites.append(self.sprite_score)
 
         self.eng_sprite = arcade.Sprite("pictures/botton.png", scale=0.5)
@@ -119,23 +119,23 @@ class WelcomeView(arcade.View):
     def create_text_objects(self):
         global LANGUAGE
 
-        if LANGUAGE == "ENG":
-            self.text_object = arcade.Text(
-                "PONG",
-                x=SCREEN_WIDTH // 2,
-                y=SCREEN_HEIGHT - 70,
-                color=arcade.color.YELLOW_ROSE,
-                font_size=100,
-                font_name="Impact",
-                anchor_x="center",
-                anchor_y="center",
-                bold=False
-            )
+        self.text_object = arcade.Text(
+            "PONG",
+            x=SCREEN_WIDTH // 2,
+            y=SCREEN_HEIGHT - 70,
+            color=arcade.color.YELLOW_ROSE,
+            font_size=100,
+            font_name="Impact",
+            anchor_x="center",
+            anchor_y="center",
+            bold=False
+        )
 
+        if LANGUAGE == "ENG":
             self.text_score = arcade.Text(
                 "Score",
                 x=SCREEN_WIDTH // 2,
-                y=SCREEN_HEIGHT - 200,
+                y=SCREEN_HEIGHT - 330,
                 color=arcade.color.WHITE,
                 font_size=50,
                 font_name="Impact",
@@ -147,7 +147,7 @@ class WelcomeView(arcade.View):
             self.text_start = arcade.Text(
                 "START",
                 x=SCREEN_WIDTH // 2,
-                y=SCREEN_HEIGHT - 330,
+                y=SCREEN_HEIGHT - 200,
                 color=arcade.color.WHITE,
                 font_size=50,
                 font_name="Impact",
@@ -156,22 +156,11 @@ class WelcomeView(arcade.View):
                 bold=False
             )
         else:
-            self.text_object = arcade.Text(
-                "ПОНГ",
-                x=SCREEN_WIDTH // 2,
-                y=SCREEN_HEIGHT - 70,
-                color=arcade.color.YELLOW_ROSE,
-                font_size=100,
-                font_name="Impact",
-                anchor_x="center",
-                anchor_y="center",
-                bold=False
-            )
 
             self.text_score = arcade.Text(
                 "Счет",
                 x=SCREEN_WIDTH // 2,
-                y=SCREEN_HEIGHT - 200,
+                y=SCREEN_HEIGHT - 330,
                 color=arcade.color.WHITE,
                 font_size=50,
                 font_name="Impact",
@@ -183,7 +172,7 @@ class WelcomeView(arcade.View):
             self.text_start = arcade.Text(
                 "СТАРТ",
                 x=SCREEN_WIDTH // 2,
-                y=SCREEN_HEIGHT - 330,
+                y=SCREEN_HEIGHT - 200,
                 color=arcade.color.WHITE,
                 font_size=50,
                 font_name="Impact",
@@ -360,11 +349,11 @@ class NameView(arcade.View):
         self.manager.add(self.name_2_field)
 
         self.botton_sprite = arcade.Sprite("pictures/botton.png", scale=0.5)
-        self.botton_sprite.center_x = SCREEN_WIDTH // 2 - 180
+        self.botton_sprite.center_x = SCREEN_WIDTH // 2 + 80
         self.botton_sprite.center_y = SCREEN_HEIGHT // 2 - 190
         self.all_sprites.append(self.botton_sprite)
         self.botton_sprite_back = arcade.Sprite("pictures/botton.png", scale=0.5)
-        self.botton_sprite_back.center_x = SCREEN_WIDTH // 2 + 180
+        self.botton_sprite_back.center_x = SCREEN_WIDTH // 2 - 80
         self.botton_sprite_back.center_y = SCREEN_HEIGHT // 2 - 190
         self.all_sprites.append(self.botton_sprite_back)
 
@@ -386,7 +375,7 @@ class NameView(arcade.View):
 
             self.Start_text = arcade.Text(
                 "Start",
-                x=SCREEN_WIDTH // 2 - 180,
+                x=SCREEN_WIDTH // 2 + 80,
                 y=SCREEN_HEIGHT // 2 - 185,
                 color=arcade.color.YELLOW_ROSE,
                 font_size=40,
@@ -397,7 +386,7 @@ class NameView(arcade.View):
             )
             self.Back_text = arcade.Text(
                 "Back",
-                x=SCREEN_WIDTH // 2 + 180,
+                x=SCREEN_WIDTH // 2 - 80,
                 y=SCREEN_HEIGHT // 2 - 185,
                 color=arcade.color.YELLOW_ROSE,
                 font_size=40,
@@ -424,7 +413,7 @@ class NameView(arcade.View):
 
             self.Start_text = arcade.Text(
                 "Старт",
-                x=SCREEN_WIDTH // 2 - 180,
+                x=SCREEN_WIDTH // 2 + 80,
                 y=SCREEN_HEIGHT // 2 - 185,
                 color=arcade.color.YELLOW_ROSE,
                 font_size=40,
@@ -435,7 +424,7 @@ class NameView(arcade.View):
             )
             self.Back_text = arcade.Text(
                 "Назад",
-                x=SCREEN_WIDTH // 2 + 180,
+                x=SCREEN_WIDTH // 2 - 80,
                 y=SCREEN_HEIGHT // 2 - 185,
                 color=arcade.color.YELLOW_ROSE,
                 font_size=40,
@@ -518,22 +507,28 @@ class RoundView(arcade.View):
         )
         self.manager.add(self.input_field)
 
-        self.botton_sprite = arcade.Sprite("pictures/botton.png", scale=0.5)
-        self.botton_sprite.center_x = SCREEN_WIDTH // 2 - 180
-        self.botton_sprite.center_y = SCREEN_HEIGHT // 2 - 190
-        self.all_sprites.append(self.botton_sprite)
 
         if Plays > 1:
             self.botton_sprite_back = arcade.Sprite("pictures/botton.png", scale=0.5)
-            self.botton_sprite_back.center_x = SCREEN_WIDTH // 2 + 160
+            self.botton_sprite_back.center_x = SCREEN_WIDTH // 2 - 120
             self.botton_sprite_back.center_y = SCREEN_HEIGHT // 2 - 190
             self.botton_sprite_back.width = 350
             self.all_sprites.append(self.botton_sprite_back)
+
+            self.botton_sprite = arcade.Sprite("pictures/botton.png", scale=0.5)
+            self.botton_sprite.center_x = SCREEN_WIDTH // 2 + 160
+            self.botton_sprite.center_y = SCREEN_HEIGHT // 2 - 190
+            self.all_sprites.append(self.botton_sprite)
         else:
             self.botton_sprite_back = arcade.Sprite("pictures/botton.png", scale=0.5)
-            self.botton_sprite_back.center_x = SCREEN_WIDTH // 2 + 180
+            self.botton_sprite_back.center_x = SCREEN_WIDTH // 2 - 80
             self.botton_sprite_back.center_y = SCREEN_HEIGHT // 2 - 190
             self.all_sprites.append(self.botton_sprite_back)
+
+            self.botton_sprite = arcade.Sprite("pictures/botton.png", scale=0.5)
+            self.botton_sprite.center_x = SCREEN_WIDTH // 2 + 80
+            self.botton_sprite.center_y = SCREEN_HEIGHT // 2 - 190
+            self.all_sprites.append(self.botton_sprite)
 
         if LANGUAGE == "ENG":
             self.round_text = arcade.Text(
@@ -551,21 +546,10 @@ class RoundView(arcade.View):
                 bold=False
             )
 
-            self.Start_text = arcade.Text(
-                "Next",
-                x=SCREEN_WIDTH // 2 - 180,
-                y=SCREEN_HEIGHT // 2 - 185,
-                color=arcade.color.YELLOW_ROSE,
-                font_size=40,
-                font_name="Impact",
-                anchor_x="center",
-                anchor_y="center",
-                bold=False
-            )
             if Plays > 1:
                 self.Back_text = arcade.Text(
                     "Finish the game",
-                    x=SCREEN_WIDTH // 2 + 160,
+                    x=SCREEN_WIDTH // 2 - 120,
                     y=SCREEN_HEIGHT // 2 - 185,
                     color=arcade.color.YELLOW_ROSE,
                     font_size=30,
@@ -574,10 +558,32 @@ class RoundView(arcade.View):
                     anchor_y="center",
                     bold=False
                 )
+                self.Start_text = arcade.Text(
+                    "Next",
+                    x=SCREEN_WIDTH // 2 + 160,
+                    y=SCREEN_HEIGHT // 2 - 185,
+                    color=arcade.color.YELLOW_ROSE,
+                    font_size=40,
+                    font_name="Impact",
+                    anchor_x="center",
+                    anchor_y="center",
+                    bold=False
+                )
             else:
                 self.Back_text = arcade.Text(
                     "Back",
-                    x=SCREEN_WIDTH // 2 + 180,
+                    x=SCREEN_WIDTH // 2 - 80,
+                    y=SCREEN_HEIGHT // 2 - 185,
+                    color=arcade.color.YELLOW_ROSE,
+                    font_size=40,
+                    font_name="Impact",
+                    anchor_x="center",
+                    anchor_y="center",
+                    bold=False
+                )
+                self.Start_text = arcade.Text(
+                    "Next",
+                    x=SCREEN_WIDTH // 2 + 80,
                     y=SCREEN_HEIGHT // 2 - 185,
                     color=arcade.color.YELLOW_ROSE,
                     font_size=40,
@@ -602,21 +608,10 @@ class RoundView(arcade.View):
                 bold=False
             )
 
-            self.Start_text = arcade.Text(
-                "Далее",
-                x=SCREEN_WIDTH // 2 - 180,
-                y=SCREEN_HEIGHT // 2 - 185,
-                color=arcade.color.YELLOW_ROSE,
-                font_size=40,
-                font_name="Impact",
-                anchor_x="center",
-                anchor_y="center",
-                bold=False
-            )
             if Plays > 1:
                 self.Back_text = arcade.Text(
                     "Завершить игру",
-                    x=SCREEN_WIDTH // 2 + 160,
+                    x=SCREEN_WIDTH // 2 - 120,
                     y=SCREEN_HEIGHT // 2 - 185,
                     color=arcade.color.YELLOW_ROSE,
                     font_size=30,
@@ -625,10 +620,32 @@ class RoundView(arcade.View):
                     anchor_y="center",
                     bold=False
                 )
+                self.Start_text = arcade.Text(
+                    "Далее",
+                    x=SCREEN_WIDTH // 2 + 160,
+                    y=SCREEN_HEIGHT // 2 - 185,
+                    color=arcade.color.YELLOW_ROSE,
+                    font_size=40,
+                    font_name="Impact",
+                    anchor_x="center",
+                    anchor_y="center",
+                    bold=False
+                )
             else:
                 self.Back_text = arcade.Text(
                     "Назад",
-                    x=SCREEN_WIDTH // 2 + 180,
+                    x=SCREEN_WIDTH // 2 - 80,
+                    y=SCREEN_HEIGHT // 2 - 185,
+                    color=arcade.color.YELLOW_ROSE,
+                    font_size=40,
+                    font_name="Impact",
+                    anchor_x="center",
+                    anchor_y="center",
+                    bold=False
+                )
+                self.Start_text = arcade.Text(
+                    "Далее",
+                    x=SCREEN_WIDTH // 2 + 80,
                     y=SCREEN_HEIGHT // 2 - 185,
                     color=arcade.color.YELLOW_ROSE,
                     font_size=40,
@@ -901,7 +918,7 @@ class SecondView(arcade.View):
             x=SCREEN_WIDTH // 2,
             y=SCREEN_HEIGHT // 2 - 100,
             color=arcade.color.YELLOW_ROSE,
-            font_size=25,
+            font_size=30,
             font_name="Impact",
             anchor_x="center",
             anchor_y="center",
@@ -935,7 +952,7 @@ class SecondView(arcade.View):
                                        x=SCREEN_WIDTH // 2,
                                        y=SCREEN_HEIGHT // 2 - 200,
                                        color=arcade.color.YELLOW_ROSE,
-                                       font_size=25,
+                                       font_size=30,
                                        font_name="Impact",
                                        anchor_x="center",
                                        anchor_y="center",
@@ -944,18 +961,22 @@ class SecondView(arcade.View):
         self.botton_sprite_1 = arcade.Sprite("pictures/botton.png", scale=0.5)
         self.botton_sprite_1.center_x = SCREEN_WIDTH // 2
         self.botton_sprite_1.center_y = SCREEN_HEIGHT // 2 - 2.5 + 100
+        self.botton_sprite_1.width = 220
         self.all_sprites.append(self.botton_sprite_1)
         self.botton_sprite_2 = arcade.Sprite("pictures/botton.png", scale=0.5)
         self.botton_sprite_2.center_x = SCREEN_WIDTH // 2
         self.botton_sprite_2.center_y = SCREEN_HEIGHT // 2 - 102.5 + 100
+        self.botton_sprite_2.width = 220
         self.all_sprites.append(self.botton_sprite_2)
         self.botton_sprite_3 = arcade.Sprite("pictures/botton.png", scale=0.5)
         self.botton_sprite_3.center_x = SCREEN_WIDTH // 2
         self.botton_sprite_3.center_y = SCREEN_HEIGHT // 2 - 202.5 + 100
+        self.botton_sprite_3.width = 220
         self.all_sprites.append(self.botton_sprite_3)
         self.botton_sprite_5 = arcade.Sprite("pictures/botton.png", scale=0.5)
         self.botton_sprite_5.center_x = SCREEN_WIDTH // 2
         self.botton_sprite_5.center_y = SCREEN_HEIGHT // 2 - 202.5
+        self.botton_sprite_5.width = 220
         self.all_sprites.append(self.botton_sprite_5)
 
     def on_draw(self):
@@ -1647,16 +1668,16 @@ class GameWindow(arcade.View):
         score_text.draw()
 
         if LANGUAGE == "ENG":
-            leave_text = arcade.Text("LEAVE", SCREEN_WIDTH_GAME // 2, 6,
+            leave_text = arcade.Text("LEAVE", SCREEN_WIDTH_GAME // 2, 8,
                                      arcade.color.YELLOW_ROSE,
-                                     font_size=48,
+                                     font_size=30,
                                      font_name="Impact",
                                      anchor_x="center",
                                      bold=False)
         else:
-            leave_text = arcade.Text("ВЫЙТИ", SCREEN_WIDTH_GAME // 2, 6,
+            leave_text = arcade.Text("ВЫЙТИ", SCREEN_WIDTH_GAME // 2, 8,
                                      arcade.color.YELLOW_ROSE,
-                                     font_size=48,
+                                     font_size=30,
                                      font_name="Impact",
                                      anchor_x="center",
                                      bold=False)

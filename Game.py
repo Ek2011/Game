@@ -21,44 +21,21 @@ NAME_2 = ""
 count_1 = None
 count_2 = None
 Plays = None
-LANGUAGE = ""
+LANGUAGE = "ENG"
 
 # ======= Класс для первого окна ======
 class WelcomeView(arcade.View):
     def __init__(self):
         super().__init__()
         arcade.set_background_color(arcade.color.DARK_BLUE_GRAY)
+        global LANGUAGE
 
-        # текстовый обьект
-        self.text_object = arcade.Text(
-            "",
-            x=SCREEN_WIDTH // 2,
-            y=SCREEN_HEIGHT // 2 + 155,
-            color=arcade.color.YELLOW_ROSE,
-            font_size=100,
-            font_name="Impact",
-            anchor_x="center",
-            anchor_y="center",
-            bold=False
-        )
-
-        self.text_score = arcade.Text(
-            "Score",
-            x=SCREEN_WIDTH // 2,
-            y=SCREEN_HEIGHT // 2,
-            color=arcade.color.WHITE,
-            font_size=50,
-            font_name="Impact",
-            anchor_x="center",
-            anchor_y="center",
-            bold=False
-        )
-        self.time_elapsed = 0
+        self.create_text_objects()
 
         self.time_elapsed = 0
 
         # параметры пульсации стартовой кнопки
-        self.start_base_scale = 0.3
+        self.start_base_scale = 0.8
         self.pulse_amplitude = 0.02
         self.pulse_speed = 8
 
@@ -74,13 +51,13 @@ class WelcomeView(arcade.View):
         self.all_sprites.append(self.tennisist_sprite_1)
 
         self.tennisist_sprite_2 = arcade.Sprite("pictures/tenn3.png", scale=0.2)
-        self.tennisist_sprite_2.center_x = SCREEN_WIDTH - 150
+        self.tennisist_sprite_2.center_x = SCREEN_WIDTH - 130
         self.tennisist_sprite_2.center_y = 100
         self.all_sprites.append(self.tennisist_sprite_2)
 
-        self.start_sprite = arcade.Sprite("pictures/startbutton.png", scale=0.3)
+        self.start_sprite = arcade.Sprite("pictures/botton.png", scale=0.8)
         self.start_sprite.center_x = SCREEN_WIDTH // 2
-        self.start_sprite.center_y = SCREEN_HEIGHT // 2 - 140
+        self.start_sprite.center_y = SCREEN_HEIGHT - 330
         self.all_sprites.append(self.start_sprite)
 
         self.tennball = arcade.Sprite("pictures/tennball.png", scale=0.15)
@@ -90,8 +67,130 @@ class WelcomeView(arcade.View):
 
         self.sprite_score = arcade.Sprite("pictures/botton.png", scale=0.8)
         self.sprite_score.center_x = SCREEN_WIDTH // 2
-        self.sprite_score.center_y = SCREEN_HEIGHT // 2
+        self.sprite_score.center_y = SCREEN_HEIGHT - 200
         self.all_sprites.append(self.sprite_score)
+
+        self.eng_sprite = arcade.Sprite("pictures/botton.png", scale=0.5)
+        self.eng_sprite.center_x = SCREEN_WIDTH // 2
+        self.eng_sprite.center_y = 50
+        self.all_sprites.append(self.eng_sprite)
+
+        self.rus_sprite = arcade.Sprite("pictures/botton.png", scale=0.5)
+        self.rus_sprite.center_x = SCREEN_WIDTH // 2
+        self.rus_sprite.center_y = 120
+        self.all_sprites.append(self.rus_sprite)
+
+        self.eng_text = arcade.Text(
+            "English",
+            x=SCREEN_WIDTH // 2,
+            y=50,
+            color=arcade.color.YELLOW_ROSE,
+            font_size=30,
+            font_name="Impact",
+            anchor_x="center",
+            anchor_y="center",
+            bold=False
+        )
+
+        self.rus_text = arcade.Text(
+            "Русский",
+            x=SCREEN_WIDTH // 2,
+            y=120,
+            color=arcade.color.YELLOW_ROSE,
+            font_size=30,
+            font_name="Impact",
+            anchor_x="center",
+            anchor_y="center",
+            bold=False
+        )
+
+        self.choose_text = arcade.Text(
+            "Choose language /  Выберите язык",
+            x=SCREEN_WIDTH // 2,
+            y=180,
+            color=arcade.color.YELLOW_ROSE,
+            font_size=18,
+            font_name="Impact",
+            anchor_x="center",
+            anchor_y="center",
+            bold=False
+        )
+
+    def create_text_objects(self):
+        global LANGUAGE
+
+        if LANGUAGE == "ENG":
+            self.text_object = arcade.Text(
+                "PONG",
+                x=SCREEN_WIDTH // 2,
+                y=SCREEN_HEIGHT - 70,
+                color=arcade.color.YELLOW_ROSE,
+                font_size=100,
+                font_name="Impact",
+                anchor_x="center",
+                anchor_y="center",
+                bold=False
+            )
+
+            self.text_score = arcade.Text(
+                "Score",
+                x=SCREEN_WIDTH // 2,
+                y=SCREEN_HEIGHT - 200,
+                color=arcade.color.WHITE,
+                font_size=50,
+                font_name="Impact",
+                anchor_x="center",
+                anchor_y="center",
+                bold=False
+            )
+
+            self.text_start = arcade.Text(
+                "START",
+                x=SCREEN_WIDTH // 2,
+                y=SCREEN_HEIGHT - 330,
+                color=arcade.color.WHITE,
+                font_size=50,
+                font_name="Impact",
+                anchor_x="center",
+                anchor_y="center",
+                bold=False
+            )
+        else:
+            self.text_object = arcade.Text(
+                "ПОНГ",
+                x=SCREEN_WIDTH // 2,
+                y=SCREEN_HEIGHT - 70,
+                color=arcade.color.YELLOW_ROSE,
+                font_size=100,
+                font_name="Impact",
+                anchor_x="center",
+                anchor_y="center",
+                bold=False
+            )
+
+            self.text_score = arcade.Text(
+                "Счет",
+                x=SCREEN_WIDTH // 2,
+                y=SCREEN_HEIGHT - 200,
+                color=arcade.color.WHITE,
+                font_size=50,
+                font_name="Impact",
+                anchor_x="center",
+                anchor_y="center",
+                bold=False
+            )
+
+            self.text_start = arcade.Text(
+                "СТАРТ",
+                x=SCREEN_WIDTH // 2,
+                y=SCREEN_HEIGHT - 330,
+                color=arcade.color.WHITE,
+                font_size=50,
+                font_name="Impact",
+                anchor_x="center",
+                anchor_y="center",
+                bold=False
+            )
 
     def on_update(self, delta_time):
         # обновление времени
@@ -114,9 +213,12 @@ class WelcomeView(arcade.View):
         self.all_sprites.draw()
 
         # отрисовка текста
-        self.text_object.value = "PONG"
         self.text_object.draw()
         self.text_score.draw()
+        self.text_start.draw()
+        self.eng_text.draw()
+        self.rus_text.draw()
+        self.choose_text.draw()
 
     def on_mouse_press(self, x, y, button, modifiers):
         # проверка нажатия на стартовую кнопку
@@ -124,34 +226,62 @@ class WelcomeView(arcade.View):
             # открытие второго окна
             global Plays
             Plays = 1
-            game_view = Language_View()
+            game_view = NameView()
             self.window.show_view(game_view)
         elif self.sprite_score.collides_with_point((x, y)):
             game_view = ScoreView()
             self.window.show_view(game_view)
 
+        global LANGUAGE
+        language_changed = False
+
+        if self.eng_sprite.collides_with_point((x, y)):
+            if LANGUAGE != "ENG":
+                LANGUAGE = "ENG"
+                language_changed = True
+        elif self.rus_sprite.collides_with_point((x, y)):
+            if LANGUAGE != "RUS":
+                LANGUAGE = "RUS"
+                language_changed = True
+
+        if language_changed:
+            self.create_text_objects()
 
 class ScoreView(arcade.View):
     def __init__(self):
         super().__init__()
         self.all_sprites = arcade.SpriteList()
+        global LANGUAGE
 
         self.botton_sprite_menu = arcade.Sprite("pictures/menu.png", scale=0.5)
         self.botton_sprite_menu.center_x = SCREEN_WIDTH // 2
         self.botton_sprite_menu.center_y = SCREEN_HEIGHT // 2 - 240
         self.all_sprites.append(self.botton_sprite_menu)
 
-        self.round_text = arcade.Text(
-            "Last 5 games",
-            x=SCREEN_WIDTH // 2,
-            y=SCREEN_HEIGHT // 2 + 240,
-            color=arcade.color.YELLOW_ROSE,
-            font_size=50,
-            font_name="Impact",
-            anchor_x="center",
-            anchor_y="center",
-            bold=False
-        )
+        if LANGUAGE == "ENG":
+            self.round_text = arcade.Text(
+                "Last 5 games",
+                x=SCREEN_WIDTH // 2,
+                y=SCREEN_HEIGHT // 2 + 240,
+                color=arcade.color.YELLOW_ROSE,
+                font_size=50,
+                font_name="Impact",
+                anchor_x="center",
+                anchor_y="center",
+                bold=False
+            )
+        else:
+            self.round_text = arcade.Text(
+                "Последние 5 игр",
+                x=SCREEN_WIDTH // 2,
+                y=SCREEN_HEIGHT // 2 + 240,
+                color=arcade.color.YELLOW_ROSE,
+                font_size=50,
+                font_name="Impact",
+                anchor_x="center",
+                anchor_y="center",
+                bold=False
+            )
 
         con = sqlite3.connect("SCORE_end")
         cur = con.cursor()
@@ -205,77 +335,6 @@ class ScoreView(arcade.View):
         if self.botton_sprite_menu.collides_with_point((x, y)):
             game_view = WelcomeView()
             self.window.show_view(game_view)
-
-class Language_View(arcade.View):
-    def __init__(self):
-        super().__init__()
-        arcade.set_background_color(arcade.color.DARK_BLUE_GRAY)
-
-        self.all_sprites = arcade.SpriteList()
-
-        self.eng_sprite = arcade.Sprite("pictures/botton.png", scale=0.8)
-        self.eng_sprite.center_x = SCREEN_WIDTH // 2
-        self.eng_sprite.center_y = SCREEN_HEIGHT // 2 + 75
-        self.all_sprites.append(self.eng_sprite)
-
-        self.rus_sprite = arcade.Sprite("pictures/botton.png", scale=0.8)
-        self.rus_sprite.center_x = SCREEN_WIDTH // 2
-        self.rus_sprite.center_y = SCREEN_HEIGHT // 2 - 75
-        self.all_sprites.append(self.rus_sprite)
-
-        self.eng_text = arcade.Text(
-            "English",
-            x=SCREEN_WIDTH // 2,
-            y=SCREEN_HEIGHT // 2 + 75,
-            color=arcade.color.YELLOW_ROSE,
-            font_size=50,
-            font_name="Impact",
-            anchor_x="center",
-            anchor_y="center",
-            bold=False
-        )
-
-        self.rus_text = arcade.Text(
-            "Русский",
-            x=SCREEN_WIDTH // 2,
-            y=SCREEN_HEIGHT // 2 - 75,
-            color=arcade.color.YELLOW_ROSE,
-            font_size=50,
-            font_name="Impact",
-            anchor_x="center",
-            anchor_y="center",
-            bold=False
-        )
-
-        self.choose_text = arcade.Text(
-            "Choose language /  Выберите язык",
-            x=SCREEN_WIDTH // 2,
-            y=SCREEN_HEIGHT - 75,
-            color=arcade.color.YELLOW_ROSE,
-            font_size=40,
-            font_name="Impact",
-            anchor_x="center",
-            anchor_y="center",
-            bold=False
-        )
-
-    def on_mouse_press(self, x, y, button, modifiers):
-        global LANGUAGE
-        if self.eng_sprite.collides_with_point((x, y)):
-            LANGUAGE = "ENG"
-            game_view = NameView()
-            self.window.show_view(game_view)
-        elif self.rus_sprite.collides_with_point((x, y)):
-            LANGUAGE = "RUS"
-            game_view = NameView()
-            self.window.show_view(game_view)
-
-    def on_draw(self):
-        self.clear()
-        self.all_sprites.draw()
-        self.eng_text.draw()
-        self.rus_text.draw()
-        self.choose_text.draw()
 
 
 class NameView(arcade.View):

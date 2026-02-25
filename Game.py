@@ -1,9 +1,10 @@
-import arcade
+from arcade.particles import FadeParticle, Emitter, EmitInterval
 import arcade.gui
 import math
 import random
 import os
 import sqlite3
+import arcade
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
@@ -741,11 +742,7 @@ class WinView(arcade.View):
         self.pulse_min_scale = 0.9
         self.pulse_max_scale = 1.5
 
-        # конфети
-        self.confetti_list = arcade.SpriteList()
-        for _ in range(150):
-            p = Confetti(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
-            self.confetti_list.append(p)
+        self.confetti = Confetti(400, 300)
 
         self.sound_played = False
 
@@ -765,7 +762,7 @@ class WinView(arcade.View):
         # обновление времени
         self.time_elapsed += delta_time
         # обновление конфети
-        self.confetti_list.update(delta_time)
+        self.confetti.update(delta_time)
 
     def on_draw(self):
         self.clear()
@@ -827,7 +824,7 @@ class WinView(arcade.View):
         # отрисовка пульсирующего текста
         pulsating_text.draw()
         # отрисовка конфети
-        self.confetti_list.draw()
+        self.confetti.draw()
 
     def close_app(self, delta_time):
         # Эта функция сработает через 5 секунд
@@ -2012,46 +2009,31 @@ class SetupView_2(arcade.View):
             self.window.show_view(game_view)
 
 
-class Confetti(arcade.Sprite):
+class Confetti(Emitter):
     def __init__(self, x, y):
-        # Создаем цветную текстуру
-        color = random.choice([
+        # Набор цветов
+        colors = [
             arcade.color.RED, arcade.color.GOLD, arcade.color.BLUE,
             arcade.color.GREEN, arcade.color.HOT_PINK, arcade.color.AZURE
-        ])
-        texture = arcade.make_soft_square_texture(10, color)
-        super().__init__(texture)
+        ]
 
-        self.center_x = x
-        self.center_y = y
+        # Настраиваем эмиттер через super()
+        super().__init__(
+            center_xy=(x, y),
+            emit_controller=EmitInterval(0.02),
+            particle_factory=lambda e: FadeParticle(
+                scale=2.0,
+                filename_or_texture=arcade.make_soft_square_texture(10, random.choice(colors)),
+                change_xy=(random.uniform(-5, 5), random.uniform(2, 8)),
+                lifetime=random.uniform(3.0, 5.0),
+                mutation_callback=self.confetti_physics  # Наша гравитация и вращение
+            )
+        )
 
-        # Скорость и вращение
-        self.change_x = random.uniform(-5, 5)
-        self.change_y = random.uniform(2, 8)
-        self.change_angle = random.uniform(-15, 15)#dd
+    def confetti_physics(self, p):
+        # Гравитация (change_y -= 0.2)
+        p.change_y -= 0.2
 
-        # Таймер жизни
-        self.lifetime = 5.0
-
-    def update(self, delta_time: float = 1 / 60):
-        # Движение
-        self.center_x += self.change_x
-        self.center_y += self.change_y
-
-        # Гравитация (пропорционально времени кадра)
-        self.change_y -= 0.2
-        self.angle += self.change_angle
-
-        # Уменьшаем время жизни
-        self.lifetime -= delta_time
-
-        # Плавное исчезновение в последнюю секунду
-        if self.lifetime <= 1.0:
-            self.alpha = max(0, int(self.lifetime * 255))
-
-        # Удаление
-        if self.lifetime <= 0:
-            self.remove_from_sprite_lists()
 
 
 def main():

@@ -702,14 +702,6 @@ class RoundView(arcade.View):
                         'INSERT INTO Score ("1Player", "1Player_score", "2Player", "2Player_score") VALUES (?, ?, ?, ?)',
                         (NAME_1, SCORE[0], NAME_2, SCORE[1]))
                     con.commit()
-                    with open("score.txt", "w", encoding="utf-8-sig") as f:
-                        f.write("0\n")
-                        f.write("0")
-                    with open("score.txt", "r", encoding="utf-8-sig") as f:
-                        k = f.readlines()
-                        SCORE.clear()
-                        for score in k:
-                            SCORE.append(int(score.rstrip()))
                 game_view = WinView()
                 self.window.show_view(game_view)
             else:
@@ -773,6 +765,7 @@ class WinView(arcade.View):
         # значальный размер шрифта
         original_font_size = 50
         # обновление текста (для пульсации)
+        print(SCORE)
         if SCORE[0] > SCORE[1]:
             if LANGUAGE == "ENG":
                 pulsating_text = arcade.Text(
@@ -788,7 +781,7 @@ class WinView(arcade.View):
                 )
             else:
                 pulsating_text = arcade.Text(
-                    f"{NAME_1} ПОБЕЖДАЕТ!",
+                    f"{NAME_2} ПОБЕЖДАЕТ!",
                     x=SCREEN_WIDTH // 2,
                     y=SCREEN_HEIGHT // 2 + 100,
                     color=arcade.color.YELLOW_ROSE,
@@ -828,6 +821,14 @@ class WinView(arcade.View):
 
     def close_app(self, delta_time):
         # Эта функция сработает через 5 секунд
+        with open("score.txt", "w", encoding="utf-8-sig") as f:
+            f.write("0\n")
+            f.write("0")
+        with open("score.txt", "r", encoding="utf-8-sig") as f:
+            k = f.readlines()
+            SCORE.clear()
+            for score in k:
+                SCORE.append(int(score.rstrip()))
         game_view = WelcomeView()
         self.window.show_view(game_view)
 
@@ -1887,14 +1888,6 @@ class EndView(arcade.View):
                     'INSERT INTO Score ("1Player", "1Player_score", "2Player", "2Player_score") VALUES (?, ?, ?, ?)',
                     (NAME_1, SCORE[0], NAME_2, SCORE[1]))
                 con.commit()
-                with open("score.txt", "w", encoding="utf-8-sig") as f:
-                    f.write("0\n")
-                    f.write("0")
-                with open("score.txt", "r", encoding="utf-8-sig") as f:
-                    k = f.readlines()
-                    SCORE.clear()
-                    for score in k:
-                        SCORE.append(int(score.rstrip()))
             Plays = None
             game_view = WinView()
             self.window.show_view(game_view)

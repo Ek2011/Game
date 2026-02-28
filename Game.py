@@ -765,7 +765,6 @@ class WinView(arcade.View):
         # значальный размер шрифта
         original_font_size = 50
         # обновление текста (для пульсации)
-        print(SCORE)
         if SCORE[0] > SCORE[1]:
             if LANGUAGE == "ENG":
                 pulsating_text = arcade.Text(
